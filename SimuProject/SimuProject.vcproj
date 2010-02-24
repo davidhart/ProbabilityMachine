@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Opengl32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -263,6 +264,26 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="GlWrapper"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\window.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\window.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
