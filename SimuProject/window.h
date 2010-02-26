@@ -4,6 +4,8 @@
 #include <windows.h>
 #include <string>
 
+class Game;
+
 class Window
 {
 private:
@@ -18,11 +20,13 @@ private:
 	bool m_open;
 	int m_width,m_height;
 	std::string m_title;
+
+	Game& m_game;
 	
 #define WINDOW_CLASS_NAME "windowclass"
 
 public:
-	Window();
+	Window(Game& game);
 	~Window();
 
 	bool Create();

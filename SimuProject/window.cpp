@@ -1,12 +1,15 @@
 #include "window.h"
+#include "game.h"
+
 #include <Gl/gl.h>
 
-Window::Window() : 
+Window::Window(Game& game) : 
+	m_game( game ),
 	m_open ( false ),
 	m_window ( NULL ),
 	m_width ( 800 ),
 	m_height ( 600 ),
-	m_title ( "Form1")
+	m_title ( "Form1" )
 {
 
 }
@@ -143,7 +146,7 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		GetClientRect(hWnd, &r);
 		m_width = r.right - r.left;
 		m_height = r.bottom - r.top;
-		glViewport(0, 0, m_width, m_height);
+		m_game.OnResize(m_width, m_height);
 		return 0;
 	}
 

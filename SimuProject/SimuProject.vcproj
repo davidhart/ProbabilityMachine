@@ -169,30 +169,24 @@
 		<Filter
 			Name="Maths"
 			>
-			<Filter
-				Name="Header Files"
-				Filter="h;hpp;hxx;hm;inl;inc;xsd"
-				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			<File
+				RelativePath=".\Line2f.h"
 				>
-				<File
-					RelativePath=".\Line2f.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Line3f.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Vector2f.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Vector3f.h"
-					>
-				</File>
-			</Filter>
+			</File>
+			<File
+				RelativePath=".\Line3f.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2f.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3f.h"
+				>
+			</File>
 			<Filter
-				Name="Source Files"
+				Name="Source"
 				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 				>
@@ -216,32 +210,28 @@
 			<Filter
 				Name="Tests"
 				>
-				<Filter
-					Name="Header Files"
+				<File
+					RelativePath=".\Line2fTests.h"
 					>
-					<File
-						RelativePath=".\Line2fTests.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Line3fTests.h"
-						>
-					</File>
-					<File
-						RelativePath=".\MathsTests.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Vector2fTests.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Vector3fTests.h"
-						>
-					</File>
-				</Filter>
+				</File>
+				<File
+					RelativePath=".\Line3fTests.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MathsTests.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Vector2fTests.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Vector3fTests.h"
+					>
+				</File>
 				<Filter
-					Name="Source Files"
+					Name="Source"
 					>
 					<File
 						RelativePath=".\Line2fTests.cpp"
@@ -269,25 +259,53 @@
 		<Filter
 			Name="GlWrapper"
 			>
+			<File
+				RelativePath=".\game.h"
+				>
+			</File>
+			<File
+				RelativePath=".\window.h"
+				>
+			</File>
 			<Filter
-				Name="Header Files"
+				Name="Source"
 				>
 				<File
-					RelativePath=".\window.h"
+					RelativePath=".\game.cpp"
 					>
 				</File>
-			</Filter>
-			<Filter
-				Name="Source Files"
-				>
 				<File
 					RelativePath=".\window.cpp"
 					>
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="Util"
+			>
+			<File
+				RelativePath=".\timer.h"
+				>
+			</File>
+			<Filter
+				Name="Source"
+				>
+				<File
+					RelativePath=".\timer.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\simulation.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\simulation.h"
 			>
 		</File>
 	</Files>
