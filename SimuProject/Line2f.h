@@ -18,6 +18,7 @@ public:
 	inline void SetPoint(const Vector2f& point) { m_point = point; }
 	inline void SetDirection(const Vector2f& direction) { m_direction = direction; }
 
+	Vector2f ClosestPointOnLineToPoint(const Vector2f& point) const;
 	float PerpendicularDistanceToPoint(const Vector2f& point) const;
 };
 
