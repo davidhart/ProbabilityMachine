@@ -37,6 +37,9 @@ bool Window::Create()
 	}
 
 	m_open = true;
+
+	m_game.OnResize(m_width, m_height);
+
 	return true;
 }
 
@@ -142,12 +145,15 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 		return 0;
 
 	case WM_SIZE:
-		RECT r;
-		GetClientRect(hWnd, &r);
-		m_width = r.right - r.left;
-		m_height = r.bottom - r.top;
-		m_game.OnResize(m_width, m_height);
-		return 0;
+		if (m_open)
+		{
+			RECT r;
+			GetClientRect(hWnd, &r);
+			m_width = r.right - r.left;
+			m_height = r.bottom - r.top;
+			m_game.OnResize(m_width, m_height);
+			return 0;
+		}
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -243,8 +249,6 @@ bool Window::InitGl()
 	
 	if (!wglMakeCurrent(m_dc, m_glrc))
 		return false;
-
-	glOrtho(0, 1, 0, 1, 0, 100);
 
 	return true;
 }

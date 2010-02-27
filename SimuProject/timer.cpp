@@ -2,7 +2,8 @@
 
 #include <sstream>
 
-Timer::Timer()
+Timer::Timer() : 
+	timeTaken( 0.0 )
 {
 
 }

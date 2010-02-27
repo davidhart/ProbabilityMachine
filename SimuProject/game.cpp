@@ -6,7 +6,7 @@
 Game::Game() : 
 	window(*this)
 {
-	window.SetSize(800, 600);
+	window.SetSize(600, 600);
 	window.SetTitle("GameWindow");
 }
 
@@ -18,6 +18,9 @@ int Game::Run()
 	Load();
 
 	Timer t;
+
+	double accumulator = 0.0;
+	double tickFrequency = 1/120.0;		// 120hz simulation
 
 	while (window.IsOpen())
 	{
@@ -31,7 +34,13 @@ int Game::Run()
 
 		window.DoEvents();
 
-		Update(t.GetTime());
+		accumulator += t.GetTime();
+
+		while(accumulator >= tickFrequency)
+		{
+			Update(tickFrequency);
+			accumulator -= tickFrequency;
+		}
 
 		t.Stop();
 	}
