@@ -48,7 +48,7 @@ void Simulation::Draw()
 	glPushMatrix();
 	glTranslated(0, 0, -1);
 
-	Line2f l(Vector2f(-1,-1), Vector2f(2,2));
+	Line2f l(Vector2f(-1,-1), Vector2f(2,4));
 	Vector2f point(0.5, -0.5);
 
 	Vector2f closePoint = l.ClosestPointOnLineToPoint(point);

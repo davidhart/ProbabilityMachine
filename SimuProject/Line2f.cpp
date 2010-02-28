@@ -18,7 +18,7 @@ Vector2f Line2f::ClosestPointOnLineToPoint(const Vector2f& point) const
 	float directionLength = m_direction.Length();
 	float distToClosestPointOnLine = m_direction.Dot(op)/directionLength;
 
-	return Vector2f(m_point.X() + m_direction.Y()/directionLength * distToClosestPointOnLine,
+	return Vector2f(m_point.X() + m_direction.X()/directionLength * distToClosestPointOnLine,
 					m_point.Y() + m_direction.Y()/directionLength * distToClosestPointOnLine);
 }
 
