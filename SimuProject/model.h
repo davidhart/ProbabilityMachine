@@ -30,10 +30,11 @@ private:
 		bool hasVt;
 	};
 
-	class OBJ_INDEX_CACHE : public OBJ_FORMAT_INDEX
+	class OBJ_INDEX_CACHE
 	{
 	public:
-		OBJ_INDEX_CACHE(int v);
+		OBJ_INDEX_CACHE();
+		int v,vt,vn;
 		int next;
 		int packedPos;
 	};
@@ -44,8 +45,8 @@ private:
 	std::vector<float> packedVertices;
 	std::vector<int> packedIndices;
 
-	float * m_vertexData;
-	int * m_indexData;
+	bool hasVn;
+	bool hasVt;
 
 public:
 	Model(const std::string& filename);

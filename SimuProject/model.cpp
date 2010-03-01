@@ -1,6 +1,8 @@
 #include "model.h"
 #include "mesh.h"
 
+#include "timer.h"
+
 #include <windows.h>
 
 #include <iostream>
@@ -38,8 +40,7 @@ void Model::OBJ_FORMAT_INDEX::SetVt(int vt)
 	hasVt = true;
 }
 
-Model::OBJ_INDEX_CACHE::OBJ_INDEX_CACHE(int v) :
-	OBJ_FORMAT_INDEX( v ),
+Model::OBJ_INDEX_CACHE::OBJ_INDEX_CACHE() : 
 	next ( -1 ),
 	packedPos ( -1 )
 {
@@ -47,9 +48,7 @@ Model::OBJ_INDEX_CACHE::OBJ_INDEX_CACHE(int v) :
 }
 
 Model::Model(const std::string& filename) :
-	m_filename ( filename ),
-	m_vertexData ( NULL ),
-	m_indexData ( NULL )
+	m_filename ( filename )
 {
 	int i;
 	for (i = filename.length()-1; i >= 0; i--)
@@ -67,7 +66,7 @@ Model::Model(const std::string& filename) :
 		if (i >= 0 && i != (signed)filename.length()-1)
 		{
 			std::string extension = filename.substr(i+1);
-			//std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
+			std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
 		
 			if (extension == "obj")
 			{
@@ -91,12 +90,15 @@ Model::~Model()
 
 void Model::LoadFromOBJFile(std::ifstream& file)
 {
+	Timer t;
+	t.Start();
 	std::vector<Vector3f> vertices;
 	std::vector<Vector3f> vertNormals;
 	std::vector<Vector2f> vertTextureCoords;
-
 	std::vector<OBJ_FORMAT_INDEX> indices;
-
+	
+	std::string token;
+	
 	/*
 	int vCount = 0, vnCount = 0, vtCount = 0;
 	
@@ -122,7 +124,9 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 	file.seekg(std::ios_base::beg);
 	*/
 
-	std::string token;
+	Timer tRead;
+	tRead.Start();
+
 	bool errorEncountered = false;
 
 	while(!file.eof())
@@ -182,8 +186,6 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 			}
 			while(file.peek() != '\n' && file.good());
 
-			std::cout << line.str() << std::endl;
-
 			std::string indexstr;
 
 			int count = 0;
@@ -213,16 +215,118 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 		file.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 	}
 
-	bool doVt = indices[0].hasVt, doVn = indices[0].hasVn;
+	tRead.Stop();
+
+	hasVt = indices[0].hasVt;
+	hasVn = indices[0].hasVn;
 
 	int stride = 3;
-	if (doVt)
+	if (hasVt)
 		stride += 2;
 
-	if (doVn)
+	if (hasVn)
 		stride += 3;
 
+	Timer tProcess;
+	tProcess.Start();
 
+	std::vector<OBJ_INDEX_CACHE> packedIndicesCache;
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		packedIndicesCache.push_back(OBJ_INDEX_CACHE());
+	}
+
+	for (int i = 0; i < indices.size(); i++)
+	{
+		// not yet packed
+		int v = indices[i].v-1;
+		if (packedIndicesCache[v].packedPos == -1)
+		{
+			packedVertices.push_back(vertices[indices[i].v-1].X());
+			packedVertices.push_back(vertices[indices[i].v-1].Y());
+			packedVertices.push_back(vertices[indices[i].v-1].Z());
+			packedIndicesCache[v].v = indices[i].v;
+
+			if (hasVt)
+			{
+				packedVertices.push_back(vertTextureCoords[indices[i].vt-1].X());
+				packedVertices.push_back(vertTextureCoords[indices[i].vt-1].Y());
+				packedIndicesCache[v].vt = indices[i].vt;
+
+			}
+
+			if (hasVn)
+			{
+				packedVertices.push_back(vertNormals[indices[i].vn-1].X());
+				packedVertices.push_back(vertNormals[indices[i].vn-1].Y());
+				packedVertices.push_back(vertNormals[indices[i].vn-1].Z());
+				packedIndicesCache[v].vn = indices[i].vn;
+			}
+
+			packedIndices.push_back((packedVertices.size()/stride)-1);
+
+			packedIndicesCache[v].packedPos = (packedVertices.size()/stride)-1;
+		}
+		// otherwise search cache
+		else
+		{
+			bool found = false;
+
+			int index = indices[i].v;
+			while (!found)
+			{
+				if (((!hasVn) || (hasVn && packedIndicesCache[index].vn == indices[i].vn)) && 
+					((!hasVt) || (hasVt && packedIndicesCache[index].vt == indices[i].vt)))
+				{
+
+					packedIndices.push_back(packedIndicesCache[index].packedPos);
+					found = true;
+					break;
+				}
+				else
+				{
+					if (packedIndicesCache[index].next == -1)
+						break;
+					else
+						index = packedIndicesCache[index].next;
+				}
+			}
+
+			if (!found)
+			{
+				packedIndicesCache.push_back(OBJ_INDEX_CACHE());
+
+				packedVertices.push_back(vertices[indices[i].v-1].X());
+				packedVertices.push_back(vertices[indices[i].v-1].Y());
+				packedVertices.push_back(vertices[indices[i].v-1].Z());
+				packedIndicesCache.back().v = indices[i].v;
+
+				if (hasVt)
+				{
+					packedVertices.push_back(vertTextureCoords[indices[i].vt-1].X());
+					packedVertices.push_back(vertTextureCoords[indices[i].vt-1].Y());
+					packedIndicesCache.back().vt = indices[i].vt;
+
+				}
+
+				if (hasVn)
+				{
+					packedVertices.push_back(vertNormals[indices[i].vn-1].X());
+					packedVertices.push_back(vertNormals[indices[i].vn-1].Y());
+					packedVertices.push_back(vertNormals[indices[i].vn-1].Z());
+					packedIndicesCache.back().vn = indices[i].vn;
+				}
+
+				packedIndices.push_back((packedVertices.size()/stride)-1);
+
+				packedIndicesCache[index].next = packedIndicesCache.size()-1;
+				packedIndicesCache.back().packedPos = (packedVertices.size()/stride)-1;
+			}
+		}
+	}
+
+	/*
 	for (int i = 0; i < indices.size(); i++)
 	{
 		bool found = false;
@@ -233,16 +337,16 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 				packedVertices[v*stride+2] == vertices[indices[i].v-1].Z())
 			{
 				int vt = v*stride + 3;
-				if ((doVt && packedVertices[vt] == vertTextureCoords[indices[i].vt-1].X() &&
-					packedVertices[vt+1] == vertTextureCoords[indices[i].vt-1].Y()) || !doVt)
+				if ((hasVt && packedVertices[vt] == vertTextureCoords[indices[i].vt-1].X() &&
+					packedVertices[vt+1] == vertTextureCoords[indices[i].vt-1].Y()) || !hasVt)
 				{
 					int vn = v*stride + 3;
-					if (doVt)
+					if (hasVt)
 						vn+=2;
 
-					if ((doVn && packedVertices[vn] == vertNormals[indices[i].vn-1].X() &&
+					if ((hasVn && packedVertices[vn] == vertNormals[indices[i].vn-1].X() &&
 						 packedVertices[vn+1] == vertNormals[indices[i].vn-1].Y() &&
-						 packedVertices[vn+2] == vertNormals[indices[i].vn-1].Z()) || ! doVn)
+						 packedVertices[vn+2] == vertNormals[indices[i].vn-1].Z()) || ! hasVn)
 					{
 						found = true;
 						packedIndices.push_back(v);
@@ -258,13 +362,13 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 			packedVertices.push_back(vertices[indices[i].v-1].Y());
 			packedVertices.push_back(vertices[indices[i].v-1].Z());
 
-			if (doVt)
+			if (hasVt)
 			{
 				packedVertices.push_back(vertTextureCoords[indices[i].vt-1].X());
 				packedVertices.push_back(vertTextureCoords[indices[i].vt-1].Y());
 			}
 
-			if (doVn)
+			if (hasVn)
 			{
 				packedVertices.push_back(vertNormals[indices[i].vn-1].X());
 				packedVertices.push_back(vertNormals[indices[i].vn-1].Y());
@@ -274,15 +378,11 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 			packedIndices.push_back((packedVertices.size()/stride)-1);
 		}
 	}
-
-	m_vertexData = new float[packedVertices.size()];
-	m_indexData = new int[packedIndices.size()];
-
-	for (int i = 0; i < packedVertices.size(); i++)
-		m_vertexData[i] = packedVertices[i];
-	
-	for (int i = 0; i < packedIndices.size(); i++)
-		m_indexData[i] = packedIndices[i];
+	*/
+	tProcess.Stop();
+	t.Stop();
+	std::cout << "OBJ (" << m_filename << ") loaded in " << t.GetTime() << "s [read: " 
+		<< tRead.GetTime() << " process: " << tProcess.GetTime() << "]"<< std::endl;
 }
 
 void Model::LoadFromMD2File(std::ifstream&)
@@ -295,13 +395,44 @@ void Model::Draw()
 	for (unsigned int i = 0; i < m_meshes.size(); i++)
 		m_meshes[i]->Draw();
 	*/
-	glEnableClientState(GL_VERTEX_ARRAY);
-	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, 6*4,  &packedVertices[0]);
-	glNormalPointer(GL_FLOAT, 6*4, &packedVertices[3]);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, &packedIndices[0]); 
+	int stride = 3*sizeof(float);
+
+	if (hasVt)
+		stride+=2*sizeof(float);
+
+	if (hasVn)
+		stride += 3*sizeof(float);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	
+	if (hasVt)
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	if (hasVn)
+		glEnableClientState(GL_NORMAL_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, stride,  &packedVertices[0]);
+	
+	if (hasVt)
+	{
+		glTexCoordPointer(2, GL_FLOAT, stride, &packedVertices[3]); 
+	}
+
+	if (hasVn)
+	{
+		int vnOffs = hasVt ? 5 : 3;
+		glNormalPointer(GL_FLOAT, stride, &packedVertices[vnOffs]);
+	}
+	glDrawElements(GL_TRIANGLES, packedIndices.size(), GL_UNSIGNED_INT, &packedIndices[0]); 
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	if (hasVt)
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	if (hasVn)
+		glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 
