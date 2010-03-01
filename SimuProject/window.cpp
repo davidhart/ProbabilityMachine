@@ -3,8 +3,8 @@
 
 #include <Gl/gl.h>
 
-Window::Window(Game& game) : 
-	m_game( game ),
+Window::Window() : 
+	m_game( NULL ),
 	m_open ( false ),
 	m_window ( NULL ),
 	m_width ( 800 ),
@@ -38,7 +38,7 @@ bool Window::Create()
 
 	m_open = true;
 
-	m_game.OnResize(m_width, m_height);
+	m_game->OnResize(m_width, m_height);
 
 	return true;
 }
@@ -118,6 +118,11 @@ const std::string& Window::GetTitle() const
 	return m_title;
 }
 
+void Window::SetGame(Game* game)
+{
+	m_game = game;
+}
+
 LRESULT CALLBACK Window::StaticWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_NCCREATE)
@@ -151,7 +156,7 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			GetClientRect(hWnd, &r);
 			m_width = r.right - r.left;
 			m_height = r.bottom - r.top;
-			m_game.OnResize(m_width, m_height);
+			m_game->OnResize(m_width, m_height);
 			return 0;
 		}
 	}

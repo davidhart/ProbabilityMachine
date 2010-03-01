@@ -3,10 +3,10 @@
 
 #include <iostream>
 
-int main(int argc, char ** argv)
+int main(int, char **)
 {
 	MathsLibTests::DoAllTests(std::cout);
 
 	Simulation sim;
-	return sim.Run();;
+	return sim.Run();
 }

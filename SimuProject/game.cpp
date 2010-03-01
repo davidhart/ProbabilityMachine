@@ -4,8 +4,9 @@
 #include <GL/gl.h>
 
 Game::Game() : 
-	window(*this)
+	window()
 {
+	window.SetGame(this);
 	window.SetSize(600, 600);
 	window.SetTitle("GameWindow");
 }

@@ -6,10 +6,12 @@
 
 #include <iostream>
 
-Simulation::Simulation() :
-	m_rotation( 0.0 )
-{
+#include "model.h"
 
+Simulation::Simulation() :
+	m_rotation( 0.0 ),
+	m_model("Resources/box.obj")
+{
 }
 
 void Simulation::OnResize(int width, int height)
@@ -46,7 +48,8 @@ void Simulation::Update(double frameTime)
 void Simulation::Draw()
 {
 	glPushMatrix();
-	glTranslated(0, 0, -1);
+	glTranslated(0, 0, -10);
+	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
 	Line2f l(Vector2f(-1,-1), Vector2f(2,4));
 	Vector2f point(0.5, -0.5);
@@ -55,6 +58,7 @@ void Simulation::Draw()
 
 	Line2f closeLine(closePoint, point-closePoint);
 
+	/*
 	glBegin(GL_LINES);
 		glColor3d(1.0, 1.0, 1.0);
 		glVertex3f(l.Point().X(), l.Point().Y(), 0);
@@ -74,6 +78,9 @@ void Simulation::Draw()
 		glColor3d(0.0, 1.0, 0.0);
 		glVertex3f(closePoint.X(), closePoint.Y(), 0);
 	glEnd();
+	*/
+
+	m_model.Draw();
 
 	glPopMatrix();
 }

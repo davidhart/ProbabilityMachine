@@ -21,12 +21,12 @@ private:
 	int m_width,m_height;
 	std::string m_title;
 
-	Game& m_game;
+	Game* m_game;
 	
 #define WINDOW_CLASS_NAME "windowclass"
 
 public:
-	Window(Game& game);
+	Window();
 	~Window();
 
 	bool Create();
@@ -43,6 +43,7 @@ public:
 
 	void SetTitle(const std::string& title);
 	const std::string& GetTitle() const;
+	void SetGame(Game* game);
 
 private:
 	static LRESULT CALLBACK StaticWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -54,6 +55,8 @@ private:
 	void Cleanup();
 	void CleanupWindow();
 	void CleanupGl();
+
+	Window& operator=( const Window& );
 };
 
 #endif

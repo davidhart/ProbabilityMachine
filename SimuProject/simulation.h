@@ -2,12 +2,13 @@
 #define _SIMULATION_H
 
 #include "game.h"
+#include "model.h"
 
 class Simulation : public Game
 {
 private:
 	double m_rotation;
-
+	Model m_model;
 public: 
 	Simulation();
 

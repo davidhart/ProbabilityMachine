@@ -264,6 +264,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\model.h"
+				>
+			</File>
+			<File
 				RelativePath=".\window.h"
 				>
 			</File>
@@ -272,6 +280,14 @@
 				>
 				<File
 					RelativePath=".\game.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\mesh.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\model.cpp"
 					>
 				</File>
 				<File
