@@ -231,6 +231,7 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 	tProcess.Start();
 
 	std::vector<OBJ_INDEX_CACHE> packedIndicesCache;
+	packedIndicesCache.reserve(vertices.size());
 
 	for (int i = 0; i < vertices.size(); i++)
 	{
