@@ -12,6 +12,7 @@ Simulation::Simulation() :
 	m_rotation( 0.0 ),
 	m_model("Resources/monkey.obj")
 {
+	window.SetTitle("Simulation");
 }
 
 void Simulation::OnResize(int width, int height)
