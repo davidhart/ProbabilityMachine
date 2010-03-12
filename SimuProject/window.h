@@ -22,6 +22,8 @@ private:
 	std::string m_title;
 
 	Game* m_game;
+
+	ULONG_PTR m_gdiplusToken;
 	
 #define WINDOW_CLASS_NAME "windowclass"
 

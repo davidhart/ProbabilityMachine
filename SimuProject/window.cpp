@@ -2,6 +2,7 @@
 #include "game.h"
 
 #include <Gl/gl.h>
+#include <gdiplus.h>
 
 Window::Window() : 
 	m_game( NULL ),
@@ -9,13 +10,17 @@ Window::Window() :
 	m_window ( NULL ),
 	m_width ( 800 ),
 	m_height ( 600 ),
-	m_title ( "Form1" )
+	m_title ( "Form1" ),
+	m_gdiplusToken ( 0 )
 {
-
+	Gdiplus::GdiplusStartupInput startupInput;
+	Gdiplus::GdiplusStartup(&m_gdiplusToken, &startupInput, NULL);
 }
 	
 Window::~Window()
 {
+	Gdiplus::GdiplusShutdown(m_gdiplusToken);
+
 	if (m_open)
 		Destroy();
 }

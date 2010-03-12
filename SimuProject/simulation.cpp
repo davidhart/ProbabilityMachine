@@ -10,7 +10,8 @@
 
 Simulation::Simulation() :
 	m_rotation( 0.0 ),
-	m_model("Resources/monkey.obj")
+	m_model("Resources/box.obj"),
+	m_texture("Resources/boxtex.png")
 {
 	window.SetTitle("Simulation");
 }
@@ -39,7 +40,13 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
-
+	m_texture.Load();
+	
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER,0.0f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
 }
 
 void Simulation::Unload()
@@ -57,7 +64,7 @@ void Simulation::Update(double frameTime)
 void Simulation::Draw()
 {
 	glPushMatrix();
-	glTranslated(0, 0, -10);
+	glTranslated(0, 0, -5);
 	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
 	/*
@@ -90,7 +97,33 @@ void Simulation::Draw()
 	glEnd();
 	*/
 
+	m_texture.Apply();
 	m_model.Draw();
 
+	
 	glPopMatrix();
+
+	/*
+	glEnable(GL_TEXTURE_2D);
+
+	m_texture.Apply();
+
+	glNormal3d(0, 0, 1);
+
+	glBegin(GL_QUADS);
+
+	glTexCoord2d(0, 0);
+	glVertex3d(-1, 1, -13);
+	glTexCoord2d(1, 0);
+	glVertex3d(1, 1, -13);
+	glTexCoord2d(1, 1);
+	glVertex3d(1, -1, -13);
+	glTexCoord2d(0, 1);
+	glVertex3d(-1, -1, -13);
+
+	glEnd();
+
+
+	glDisable(GL_TEXTURE_2D);
+	*/
 }

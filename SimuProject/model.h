@@ -52,10 +52,10 @@ public:
 	Model(const std::string& filename);
 	~Model();
 	void Draw();
-	void LoadFromOBJFile(std::ifstream& file);
-	void LoadFromMD2File(std::ifstream& file);
 
 private:
+	void LoadFromOBJFile(std::ifstream& file);
+	void LoadFromMD2File(std::ifstream& file);
 	static OBJ_FORMAT_INDEX ParseOBJIndex(const std::string& face);
 };
 

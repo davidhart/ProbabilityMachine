@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Opengl32.lib"
+				AdditionalDependencies="Opengl32.lib Gdiplus.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Opengl32.lib"
+				AdditionalDependencies="Opengl32.lib Gdiplus.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -273,6 +273,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\texture.h"
+				>
+			</File>
+			<File
 				RelativePath=".\window.h"
 				>
 			</File>
@@ -289,6 +293,10 @@
 				</File>
 				<File
 					RelativePath=".\model.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\texture.cpp"
 					>
 				</File>
 				<File

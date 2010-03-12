@@ -3,12 +3,14 @@
 
 #include "game.h"
 #include "model.h"
+#include "texture.h"
 
 class Simulation : public Game
 {
 private:
 	double m_rotation;
 	Model m_model;
+	Texture m_texture;
 public: 
 	Simulation();
 

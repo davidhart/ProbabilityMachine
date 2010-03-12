@@ -233,12 +233,12 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 	std::vector<OBJ_INDEX_CACHE> packedIndicesCache;
 	packedIndicesCache.reserve(vertices.size());
 
-	for (int i = 0; i < vertices.size(); i++)
+	for (unsigned int i = 0; i < vertices.size(); i++)
 	{
 		packedIndicesCache.push_back(OBJ_INDEX_CACHE());
 	}
 
-	for (int i = 0; i < indices.size(); i++)
+	for (unsigned int i = 0; i < indices.size(); i++)
 	{
 		// not yet packed
 		int v = indices[i].v-1;
