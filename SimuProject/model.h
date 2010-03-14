@@ -12,7 +12,7 @@ class Mesh;
 
 class Model
 {
-private:
+public:
 	class OBJ_FORMAT_INDEX
 	{
 	public:
@@ -30,23 +30,12 @@ private:
 		bool hasVt;
 	};
 
-	class OBJ_INDEX_CACHE
-	{
-	public:
-		OBJ_INDEX_CACHE();
-		int v,vt,vn;
-		int next;
-		int packedPos;
-	};
-
 	std::vector<Mesh*> m_meshes;
 	std::string m_filename;
 
-	std::vector<float> packedVertices;
-	std::vector<int> packedIndices;
-
-	bool hasVn;
-	bool hasVt;
+	typedef std::vector<Vector3f> Vertex3fVector;
+	typedef std::vector<Vector2f> Vertex2fVector;
+	typedef std::vector<OBJ_FORMAT_INDEX> ObjIndicesVector;
 
 public:
 	Model(const std::string& filename);
