@@ -67,39 +67,8 @@ void Simulation::Draw()
 	glTranslated(0, 0, -5);
 	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
-	/*
-	Line2f l(Vector2f(-1,-1), Vector2f(2,4));
-	Vector2f point(0.5, -0.5);
-
-	Vector2f closePoint = l.ClosestPointOnLineToPoint(point);
-
-	Line2f closeLine(closePoint, point-closePoint);
-
-	
-	glBegin(GL_LINES);
-		glColor3d(1.0, 1.0, 1.0);
-		glVertex3f(l.Point().X(), l.Point().Y(), 0);
-		glVertex3f(l.Point().X() + l.Direction().X(), l.Point().Y() + l.Direction().Y(), 0);
-		
-		glColor3d(1.0, 0.0, 0.0);
-		glVertex3f(closeLine.Point().X(), closeLine.Point().Y(), 0);
-		glVertex3f(closeLine.Point().X() + closeLine.Direction().X(), closeLine.Point().Y() + closeLine.Direction().Y(), 0);
-	glEnd();
-
-
-	glPointSize(5.0f);
-	glBegin(GL_POINTS);
-		glColor3d(0.0, 0.0, 1.0);
-		glVertex3f(point.X(), point.Y(), 0);
-		
-		glColor3d(0.0, 1.0, 0.0);
-		glVertex3f(closePoint.X(), closePoint.Y(), 0);
-	glEnd();
-	*/
-
 	m_texture.Apply();
 	m_model.Draw();
 
-	
 	glPopMatrix();
 }

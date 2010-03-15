@@ -33,8 +33,9 @@ void Texture::Load()
 
 	Gdiplus::BitmapData bitmapdata;
 
-	if (m_textureData->LockBits(&Gdiplus::Rect(0, 0, m_textureData->GetWidth(), m_textureData->GetHeight()), 
-		Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapdata) == Gdiplus::Ok)
+	Gdiplus::Rect lockRect(0, 0, m_textureData->GetWidth(), m_textureData->GetHeight());
+
+	if (m_textureData->LockBits(&lockRect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapdata) == Gdiplus::Ok)
 	{
 
 		glEnable(GL_TEXTURE_2D);
