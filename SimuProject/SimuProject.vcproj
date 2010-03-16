@@ -261,6 +261,10 @@
 			Name="GlWrapper"
 			>
 			<File
+				RelativePath=".\camera.h"
+				>
+			</File>
+			<File
 				RelativePath=".\game.h"
 				>
 			</File>
@@ -283,6 +287,10 @@
 			<Filter
 				Name="Source"
 				>
+				<File
+					RelativePath=".\camera.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\game.cpp"
 					>

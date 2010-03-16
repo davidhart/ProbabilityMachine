@@ -11,7 +11,8 @@
 Simulation::Simulation() :
 	m_rotation( 0.0 ),
 	m_model("Resources/box.obj"),
-	m_texture("Resources/boxtex.png")
+	m_texture("Resources/boxtex.png"),
+	m_camera(Vector3f(0, 0, -5), 0,0,0)
 {
 	window.SetTitle("Simulation");
 }
@@ -59,12 +60,19 @@ void Simulation::Update(double frameTime)
 	m_rotation += frameTime*100.0;
 	if (m_rotation > 360)
 		m_rotation -= 360;
+
+	//m_camera.RotateYaw((float)frameTime*100.0f);
+	m_camera.MoveForward(-(float)frameTime*10.0f);
 }
 
 void Simulation::Draw()
 {
 	glPushMatrix();
+
+	m_camera.SetViewMatrix();
+	/*
 	glTranslated(0, 0, -5);
+	*/
 	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
 	m_texture.Apply();

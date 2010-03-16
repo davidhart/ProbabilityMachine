@@ -4,6 +4,7 @@
 #include "game.h"
 #include "model.h"
 #include "texture.h"
+#include "camera.h"
 
 class Simulation : public Game
 {
@@ -11,6 +12,8 @@ private:
 	double m_rotation;
 	Model m_model;
 	Texture m_texture;
+	Camera m_camera;
+
 public: 
 	Simulation();
 
