@@ -269,6 +269,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\material.h"
+				>
+			</File>
+			<File
+				RelativePath=".\materialgroup.h"
+				>
+			</File>
+			<File
 				RelativePath=".\mesh.h"
 				>
 			</File>
@@ -293,6 +301,14 @@
 				</File>
 				<File
 					RelativePath=".\game.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\material.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\materialgroup.cpp"
 					>
 				</File>
 				<File

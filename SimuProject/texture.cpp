@@ -6,7 +6,7 @@
 #include <iostream>
 
 Texture::Texture(const std::string &filename) :
-	m_filename ( filename ),
+	m_filename ( std::string("Resources/") + filename ),
 	m_textureData ( NULL ),
 	m_loaded ( false ),
 	m_textureID ( 0 )

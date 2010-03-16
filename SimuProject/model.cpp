@@ -1,7 +1,7 @@
 #include "model.h"
 #include "mesh.h"
-
 #include "timer.h"
+#include "materialgroup.h"
 
 #include <windows.h>
 
@@ -11,6 +11,8 @@
 #include <limits>
 
 #include <GL/gl.h>
+
+using std::string;
 
 Model::OBJ_FORMAT_INDEX::OBJ_FORMAT_INDEX(int v, int vn, int vt) :
 	v ( v ),
@@ -177,17 +179,45 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 				}
 			}
 		}
+		else if (token == "#")
+		{
+
+		}
 		else if (token == "usemtl")
 		{
 			file >> material;
 
 			if (indices.size() > 0)
 			{
-				m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, material));
+				m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, &m_materialGroup.RequestMaterial(material)));
 			}
 
 			indices.clear();
 		}
+		else if (token == "mtllib")
+		{
+				string materialLibFileName;
+
+				file >> materialLibFileName;
+
+				if (!file.fail())
+				{
+					int i;
+					for (i = m_filename.size()-1; i >= 0; i--)
+					{
+						if( m_filename[i] == '\\' || m_filename[i] == '/' )
+							break;
+					}
+
+					string relativeDirLibName = m_filename.substr(0,i+1) + materialLibFileName;
+
+					m_materialGroup.LoadMaterialsFromFile(relativeDirLibName);
+				}
+		}
+		}
+		else
+		{
+			file.clear();
 		}
 
 		file.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
@@ -195,7 +225,7 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 
 	if (indices.size() > 0)
 	{
-		m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, material));
+		m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, &m_materialGroup.RequestMaterial(material)));
 	}
 
 	t.Stop();
@@ -212,6 +242,11 @@ void Model::Draw()
 	for (unsigned int i = 0; i < m_meshes.size(); i++)
 		m_meshes[i]->Draw();
 	
+}
+
+void Model::Load()
+{
+	m_materialGroup.Load();
 }
 
 

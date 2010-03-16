@@ -1,6 +1,8 @@
 #ifndef _VECTOR3F_H
 #define _VECTOR3F_H
 
+#include <istream>
+
 class Vector3f
 {
 public:
@@ -33,5 +35,7 @@ public:
 	Vector3f Cross(const Vector3f& pV)const;
 	float Dot(const Vector3f& pV)const;
 };
+
+std::istream& operator>>(std::istream& in, Vector3f& v);
 
 #endif

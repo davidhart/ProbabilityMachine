@@ -11,7 +11,7 @@ Mesh::OBJ_INDEX_CACHE::OBJ_INDEX_CACHE() :
 }
 
 Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& normals, const Model::Vertex2fVector& texCoords,
-		   const Model::ObjIndicesVector& indices, const std::string& material) :
+		   const Model::ObjIndicesVector& indices, Material* material) :
 	m_material(material)
 {
 
@@ -124,6 +124,8 @@ Mesh::~Mesh()
 
 void Mesh::Draw()
 {	
+	m_material->Apply();
+
 	int stride = 3*sizeof(float);
 
 	if (m_hasVt)

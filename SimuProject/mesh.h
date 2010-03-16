@@ -4,18 +4,18 @@
 #include <vector>
 #include <string>
 #include "model.h"
-#include "Vector3f.h"
+#include "material.h"
 
 class Mesh
 {
 private:
-	std::string m_material;
-
 	bool m_hasVn;
 	bool m_hasVt;
 
 	std::vector<float> m_packedVertices;
 	std::vector<int> m_packedIndices;
+
+	Material* m_material;
 
 	class OBJ_INDEX_CACHE
 	{
@@ -28,7 +28,7 @@ private:
 
 public:
 	Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& normals, const Model::Vertex2fVector& texCoords,
-			const Model::ObjIndicesVector& indices, const std::string& material);
+			const Model::ObjIndicesVector& indices, Material* material);
 	virtual ~Mesh();
 
 	void Draw();

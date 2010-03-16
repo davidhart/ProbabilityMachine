@@ -1,17 +1,14 @@
 #include "simulation.h"
-
 #include "line2f.h"
+#include "model.h"
 
 #include <Gl/gl.h>
-
 #include <iostream>
-
-#include "model.h"
 
 Simulation::Simulation() :
 	m_rotation( 0.0 ),
 	m_model("Resources/box.obj"),
-	m_texture("Resources/boxtex.png"),
+	m_texture("boxtex.png"),
 	m_camera(Vector3f(0, 0, -5), 0,0,0)
 {
 	window.SetTitle("Simulation");
@@ -42,6 +39,7 @@ void Simulation::OnResize(int width, int height)
 void Simulation::Load()
 {
 	m_texture.Load();
+	m_model.Load();
 	
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER,0.0f);
@@ -62,7 +60,7 @@ void Simulation::Update(double frameTime)
 		m_rotation -= 360;
 
 	//m_camera.RotateYaw((float)frameTime*100.0f);
-	m_camera.MoveForward(-(float)frameTime*10.0f);
+	//m_camera.MoveForward(-(float)frameTime*10.0f);
 }
 
 void Simulation::Draw()
@@ -70,12 +68,9 @@ void Simulation::Draw()
 	glPushMatrix();
 
 	m_camera.SetViewMatrix();
-	/*
-	glTranslated(0, 0, -5);
-	*/
+
 	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
-	m_texture.Apply();
 	m_model.Draw();
 
 	glPopMatrix();

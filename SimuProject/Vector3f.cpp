@@ -52,3 +52,22 @@ float Vector3f::Dot(const Vector3f& pV) const
 {
 	return m_X * pV.m_X + m_Y * pV.m_Y + m_Z * pV.m_Z;
 }
+
+std::istream& operator>>(std::istream& in, Vector3f& v)
+{
+	float x,y,z;
+	std::istream::pos_type p =  in.tellg();
+
+	in >> x >> y >> z;
+
+	if (in.fail())
+		in.seekg(p);
+	else
+	{
+		v.SetX(x);
+		v.SetY(y);
+		v.SetZ(z);
+	}
+
+	return in;
+}
