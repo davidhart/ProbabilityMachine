@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Opengl32.lib Gdiplus.lib"
+				AdditionalDependencies="Opengl32.lib Gdiplus.lib glu32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -179,6 +179,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Math.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix3x3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Vector2f.h"
 				>
 			</File>
@@ -197,6 +205,10 @@
 				</File>
 				<File
 					RelativePath=".\Line3f.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Matrix3x3.cpp"
 					>
 				</File>
 				<File
@@ -224,6 +236,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Matrix3x3Tests.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Vector2fTests.h"
 					>
 				</File>
@@ -247,6 +263,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Matrix3x3Tests.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\Vector2fTests.cpp"
 						>
 					</File>
@@ -266,6 +286,10 @@
 			</File>
 			<File
 				RelativePath=".\game.h"
+				>
+			</File>
+			<File
+				RelativePath=".\input.h"
 				>
 			</File>
 			<File
@@ -301,6 +325,10 @@
 				</File>
 				<File
 					RelativePath=".\game.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\input.cpp"
 					>
 				</File>
 				<File

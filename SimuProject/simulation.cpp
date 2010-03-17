@@ -3,26 +3,36 @@
 #include "model.h"
 
 #include <Gl/gl.h>
+#include <Gl/glu.h>
 #include <iostream>
+
+#include "Math.h" // PI
+#include <cmath>
 
 Simulation::Simulation() :
 	m_rotation( 0.0 ),
-	m_model("Resources/box.obj"),
+	m_model("Resources/plane.obj"),
 	m_texture("boxtex.png"),
-	m_camera(Vector3f(0, 0, -5), 0,0,0)
+	m_camera(Vector3f(-5, 5, 20), 0.15f, 0.15f, 0)
 {
-	window.SetTitle("Simulation");
+	m_window.SetTitle("Simulation");
 }
 
 void Simulation::OnResize(int width, int height)
 {
 	Game::OnResize(width, height);
 
-	double aspect = (double)width/(double)height;
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-aspect, aspect, -1, 1, 1, 1000);
+	
+	double aspect = (double)width/(double)height;
+
+	double nearPlane = 1;
+	double farPlane = 1000;
+	double fov = 45.0*MATH_PI/180.0f;
+	double top = tan(fov*0.5) * nearPlane;
+	glFrustum(-aspect*top, aspect*top, -top, top, nearPlane, farPlane);
+	
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -53,14 +63,42 @@ void Simulation::Unload()
 
 }
 
-void Simulation::Update(double frameTime)
+void Simulation::Update(const Input& input, double frameTime)
 {
 	m_rotation += frameTime*100.0;
 	if (m_rotation > 360)
 		m_rotation -= 360;
 
-	//m_camera.RotateYaw((float)frameTime*100.0f);
-	//m_camera.MoveForward(-(float)frameTime*10.0f);
+	if (input.IsKeyDown(Input::KEY_LEFT))
+		m_camera.MoveStrafe(-(float)frameTime*10.0f);
+
+	if (input.IsKeyDown(Input::KEY_RIGHT))
+		m_camera.MoveStrafe((float)frameTime*10.0f);
+
+	if (input.IsKeyDown(Input::KEY_UP))
+		m_camera.MoveForward(-(float)frameTime*10.0f);
+
+	if (input.IsKeyDown(Input::KEY_DOWN))
+		m_camera.MoveForward((float)frameTime*10.0f);
+
+	Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
+
+	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
+	{
+		if (mouseMoveDist.X() != 0.0f)
+		{
+			m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
+			//std::cout << "X:" << mouseMoveDist.X() << std::endl;
+		}
+
+		if (mouseMoveDist.Y() != 0.0f)
+		{
+			m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
+			//std::cout << "Y:" << mouseMoveDist.Y() << std::endl;
+		}
+	}
+
+	//m_camera.MoveForward(-(float)frameTime*1.0f);
 }
 
 void Simulation::Draw()
@@ -69,7 +107,7 @@ void Simulation::Draw()
 
 	m_camera.SetViewMatrix();
 
-	glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
+	//glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
 
 	m_model.Draw();
 

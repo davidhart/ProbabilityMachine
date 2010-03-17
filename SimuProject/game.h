@@ -8,14 +8,14 @@ class Game
 	friend class Window;
 
 protected:
-	Window window;
+	Window m_window;
 
 public:
 	Game();
 	int Run();
 
 protected:
-	virtual void Update(double frameTime) = 0;
+	virtual void Update(const Input& input, double frameTime) = 0;
 	virtual void Draw() = 0;
 
 	virtual void Load() = 0;

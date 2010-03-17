@@ -55,6 +55,7 @@ void Window::Destroy()
 
 void Window::DoEvents()
 {	
+	m_input.UpdateTick();
 	MSG msg;
 	while(PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
 	{
@@ -128,6 +129,11 @@ void Window::SetGame(Game* game)
 	m_game = game;
 }
 
+const Input& Window::GetInput() const
+{
+	return m_input;
+}
+
 LRESULT CALLBACK Window::StaticWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_NCCREATE)
@@ -165,6 +171,9 @@ LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			return 0;
 		}
 	}
+
+	if (m_input.Callback(hWnd, message, wParam, lParam))
+		return 0;
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

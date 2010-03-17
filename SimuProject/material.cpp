@@ -5,7 +5,6 @@
 #include <Gl/gl.h>
 
 Material::Material(const std::string& kdMap, const Vector3f& Ka, const Vector3f& Kd, const Vector3f& Ks, float d, float Ns, int illum) :
-	m_texture(new Texture(kdMap)),
 		m_ambient(Ka),
 		m_diffuse(Kd),
 		m_specular(Ks),
@@ -13,6 +12,10 @@ Material::Material(const std::string& kdMap, const Vector3f& Ka, const Vector3f&
 		m_shininess(Ns),
 		m_lightingMode(illum)
 {
+	if (!kdMap.empty())
+		m_texture = new Texture(kdMap);
+	else
+		m_texture = NULL;
 
 }
 

@@ -19,7 +19,7 @@ public:
 
 	void Load();
 	void Unload();
-	void Update(double frameTime);
+	void Update(const Input& input, double frameTime);
 	void OnResize(int width, int height);
 	void Draw();
 };

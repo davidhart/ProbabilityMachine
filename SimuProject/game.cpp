@@ -4,16 +4,16 @@
 #include <GL/gl.h>
 
 Game::Game() : 
-	window()
+	m_window()
 {
-	window.SetGame(this);
-	window.SetSize(600, 600);
-	window.SetTitle("GameWindow");
+	m_window.SetGame(this);
+	m_window.SetSize(600, 600);
+	m_window.SetTitle("GameWindow");
 }
 
 int Game::Run()
 {
-	if (!window.Create())
+	if (!m_window.Create())
 		return 1;
 
 	Load();
@@ -23,23 +23,22 @@ int Game::Run()
 	double accumulator = 0.0;
 	double tickFrequency = 1/120.0;		// 120hz simulation
 
-	while (window.IsOpen())
+	while (m_window.IsOpen())
 	{
 		t.Start();
 
-		window.Clear();
+		m_window.Clear();
 
 		Draw();
 
-		window.Present();
-
-		window.DoEvents();
+		m_window.Present();
 
 		accumulator += t.GetTime();
 
 		while(accumulator >= tickFrequency)
 		{
-			Update(tickFrequency);
+			m_window.DoEvents();
+			Update(m_window.GetInput(), tickFrequency);
 			accumulator -= tickFrequency;
 		}
 
