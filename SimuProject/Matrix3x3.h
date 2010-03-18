@@ -15,6 +15,7 @@ public:
 	static void RotationX(Matrix3x3& matrix, float angle);
 	static void RotationY(Matrix3x3& matrix, float angle);
 	static void RotationZ(Matrix3x3& matrix, float angle);
+	static void RotationAxis(Matrix3x3& matrix, const Vector3f& axis, float angle);
 
 	friend const Vector3f operator* (const Vector3f& lhs, const Matrix3x3& rhs);
 	friend const Matrix3x3 operator* (const Matrix3x3& lhs, const Matrix3x3& rhs);

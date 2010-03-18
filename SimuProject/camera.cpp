@@ -19,33 +19,36 @@ Camera::Camera(const Vector3f &position, float pitch, float yaw, float roll) :
 void Camera::MoveForward(float amount)
 {
 	Vector3f forwardVector(0, 0, amount);
+	Vector3f rightVector(1, 0, 0);
 
-	Matrix3x3 rX, rY, rZ;
+	Matrix3x3 rYaw;
 
-	Matrix3x3::RotationX(rX, m_pitch);
-	Matrix3x3::RotationY(rY, m_yaw);
-	Matrix3x3::RotationY(rZ, m_roll);
+	Matrix3x3::RotationY(rYaw, m_yaw);
+	forwardVector = forwardVector * rYaw;
+	rightVector = rightVector * rYaw;
 
-	Vector3f v = forwardVector * (rY * rX);
+	Matrix3x3 rPitch;
+	Matrix3x3::RotationAxis(rPitch, rightVector, m_pitch);
+
+	Vector3f v = forwardVector * (rPitch);
 	m_position = m_position.Add(v); 
-
-
-	std::cout << "A: " << m_pitch << " " << m_yaw << " " << m_roll << std::endl;
-	std::cout << "v: " << v.X() << " " << v.Y() << " " << v.Z() << std::endl;
-
 }
 
 void Camera::MoveStrafe(float amount)
 {
+	Vector3f upVector(0, 1, 0);
 	Vector3f strafeVector(amount, 0, 0);
 
-	Matrix3x3 rX, rY, rZ;
+	Matrix3x3 rRoll;
+	Matrix3x3::RotationZ(rRoll, m_roll);
+	upVector = upVector * rRoll;
+	strafeVector = strafeVector * rRoll;
 
-	Matrix3x3::RotationX(rX, m_pitch);
-	Matrix3x3::RotationY(rY, m_yaw);
-	Matrix3x3::RotationZ(rZ, m_roll);
-	
-	m_position = m_position.Add(((strafeVector * rZ) * rY) * rX); 
+	Matrix3x3 rYaw;
+	Matrix3x3::RotationAxis(rYaw, upVector, m_yaw);
+
+	Vector3f v = strafeVector * rYaw;
+	m_position = m_position.Add(v);
 }
 
 void Camera::RotatePitch(float amount)

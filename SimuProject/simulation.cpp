@@ -3,7 +3,6 @@
 #include "model.h"
 
 #include <Gl/gl.h>
-#include <Gl/glu.h>
 #include <iostream>
 
 #include "Math.h" // PI
@@ -13,7 +12,7 @@ Simulation::Simulation() :
 	m_rotation( 0.0 ),
 	m_model("Resources/plane.obj"),
 	m_texture("boxtex.png"),
-	m_camera(Vector3f(-5, 5, 20), 0.15f, 0.15f, 0)
+	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
 {
 	m_window.SetTitle("Simulation");
 }
