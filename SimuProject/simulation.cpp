@@ -9,8 +9,9 @@
 #include <cmath>
 
 Simulation::Simulation() :
-	m_rotation( 0.0 ),
-	m_model("Resources/plane.obj"),
+	m_rotationX( 0.0 ),
+	m_rotationY( 0.0 ),
+	m_model("Resources/monkey.obj"),
 	m_texture("boxtex.png"),
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
 {
@@ -32,17 +33,6 @@ void Simulation::OnResize(int width, int height)
 	double top = tan(fov*0.5) * nearPlane;
 	glFrustum(-aspect*top, aspect*top, -top, top, nearPlane, farPlane);
 	
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glEnable(GL_DEPTH);
-	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	float lightpos [ ] = {0 , 0 , 0 ,1};
-	glLightfv( GL_LIGHT0 , GL_POSITION, lightpos );
 }
 
 void Simulation::Load()
@@ -55,6 +45,18 @@ void Simulation::Load()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_DEPTH);
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	GLfloat ambient [] = { 0.4f, 0.4f, 0.4f, 0.4f };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 }
 
 void Simulation::Unload()
@@ -64,10 +66,6 @@ void Simulation::Unload()
 
 void Simulation::Update(const Input& input, double frameTime)
 {
-	m_rotation += frameTime*100.0;
-	if (m_rotation > 360)
-		m_rotation -= 360;
-
 	if (input.IsKeyDown(Input::KEY_LEFT))
 		m_camera.MoveStrafe(-(float)frameTime*10.0f);
 
@@ -96,6 +94,11 @@ void Simulation::Update(const Input& input, double frameTime)
 			//std::cout << "Y:" << mouseMoveDist.Y() << std::endl;
 		}
 	}
+	if (input.IsButtonDown(Input::MBUTTON_LEFT))
+	{
+		m_rotationX += mouseMoveDist.X()/300.0f;
+		m_rotationY += mouseMoveDist.Y()/300.0f;
+	}
 
 	//m_camera.MoveForward(-(float)frameTime*1.0f);
 }
@@ -106,7 +109,11 @@ void Simulation::Draw()
 
 	m_camera.SetViewMatrix();
 
-	//glRotated(m_rotation, 1.0f, 1.0f, 0.0f);
+	float lightpos [ ] = {-4 , 4 , 4,  1};
+	glLightfv( GL_LIGHT0 , GL_POSITION, lightpos );
+
+	glRotated(m_rotationX*180/MATH_PI, 1, 0, 0);
+	glRotated(m_rotationY*180/MATH_PI, 0, 1, 0);
 
 	m_model.Draw();
 

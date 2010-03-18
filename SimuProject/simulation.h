@@ -9,7 +9,7 @@
 class Simulation : public Game
 {
 private:
-	double m_rotation;
+	double m_rotationX,m_rotationY;
 	Model m_model;
 	Texture m_texture;
 	Camera m_camera;
