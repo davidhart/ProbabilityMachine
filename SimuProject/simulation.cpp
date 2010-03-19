@@ -11,7 +11,7 @@
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
-	m_model("Resources/monkey.obj"),
+	m_model("Resources/machine.obj"),
 	m_texture("boxtex.png"),
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
 {
@@ -85,13 +85,11 @@ void Simulation::Update(const Input& input, double frameTime)
 		if (mouseMoveDist.X() != 0.0f)
 		{
 			m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
-			//std::cout << "X:" << mouseMoveDist.X() << std::endl;
 		}
 
 		if (mouseMoveDist.Y() != 0.0f)
 		{
 			m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
-			//std::cout << "Y:" << mouseMoveDist.Y() << std::endl;
 		}
 	}
 	if (input.IsButtonDown(Input::MBUTTON_LEFT))
@@ -112,8 +110,8 @@ void Simulation::Draw()
 	float lightpos [ ] = {-4 , 4 , 4,  1};
 	glLightfv( GL_LIGHT0 , GL_POSITION, lightpos );
 
-	glRotated(m_rotationX*180/MATH_PI, 1, 0, 0);
-	glRotated(m_rotationY*180/MATH_PI, 0, 1, 0);
+	glRotated(m_rotationX*180/MATH_PI, 0, 1, 0);
+	glRotated(m_rotationY*180/MATH_PI, 1, 0, 0);
 
 	m_model.Draw();
 
