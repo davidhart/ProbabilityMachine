@@ -11,11 +11,38 @@
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
-	m_model("Resources/machine.obj"),
-	m_texture("boxtex.png"),
-	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
+	m_modelMachine("Resources/machine.obj"),
+	m_modelPeg("Resources/peg.obj"),
+	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
+	m_objectMachine(&m_modelMachine, Vector3f(0,0,0))
 {
 	m_window.SetTitle("Simulation");
+
+	m_objectPegs.reserve(68);
+
+	for (int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 8; j++)
+		{
+			m_objectPegs.push_back(new Object(&m_modelPeg, Vector3f(-3.5f + j * 1.0f, i*1.0f + 2.5f, 0.0f)));
+		}
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			m_objectPegs.push_back(new Object(&m_modelPeg, Vector3f(-4.0f + j * 1.0f, i*1.0f + 3.0f, 0.0f)));
+		}
+	}
+}
+
+Simulation::~Simulation()
+{
+	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
+	{
+		delete m_objectPegs[i];
+	}
 }
 
 void Simulation::OnResize(int width, int height)
@@ -37,8 +64,8 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
-	m_texture.Load();
-	m_model.Load();
+	m_modelMachine.Load();
+	m_modelPeg.Load();
 	
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER,0.0f);
@@ -46,6 +73,9 @@ void Simulation::Load()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
 	
+	glEnable(GL_CULL_FACE);
+
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -113,7 +143,12 @@ void Simulation::Draw()
 	glRotated(m_rotationX*180/MATH_PI, 0, 1, 0);
 	glRotated(m_rotationY*180/MATH_PI, 1, 0, 0);
 
-	m_model.Draw();
+	m_objectMachine.Draw();
+
+	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
+	{
+		m_objectPegs[i]->Draw();
+	}
 
 	glPopMatrix();
 }

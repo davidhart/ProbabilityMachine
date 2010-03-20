@@ -309,6 +309,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\object.h"
+				>
+			</File>
+			<File
 				RelativePath=".\texture.h"
 				>
 			</File>
@@ -345,6 +349,10 @@
 				</File>
 				<File
 					RelativePath=".\model.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\object.cpp"
 					>
 				</File>
 				<File
