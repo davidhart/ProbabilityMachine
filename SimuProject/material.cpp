@@ -62,6 +62,11 @@ void Material::Apply()
 	if (m_lightingMode == 1)
 	{
 		glMaterialf(GL_FRONT, GL_SHININESS, 0);
+
+		temp[0] = 0;
+		temp[1] = 0;
+		temp[2] = 0;
+		glMaterialfv(GL_FRONT, GL_SPECULAR, temp);
 	}
 	else if (m_lightingMode == 2)
 	{
