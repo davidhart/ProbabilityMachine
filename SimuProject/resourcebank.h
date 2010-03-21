@@ -20,14 +20,22 @@ private:
 	TextureHashMap m_textureMap;
 	MaterialHashMap m_materialMap;
 
+	bool m_loaded;
+
 public:
+	ResourceBank();
 	virtual ~ResourceBank();
 	
 	Model* RequestModel(const std::string& model);
 	Texture* RequestTexture(const std::string& texture);
 	Material* RequestMaterial(const std::string& material);
 
+	void Load();
+	void Unload();
+
 	void LoadMaterialsFromFile(const std::string& filename);
+
+private:
 	void AddMaterial(const std::string& material, 
 		const std::string& kdMap, const Vector3f& Ka, const Vector3f& Kd, const Vector3f& Ks, float d, float Ns, int illum);
 };

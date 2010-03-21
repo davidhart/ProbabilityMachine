@@ -43,7 +43,8 @@ void Model::OBJ_FORMAT_INDEX::SetVt(int vt)
 }
 
 Model::Model(const std::string& filename, ResourceBank* resources) :
-	m_filename ( filename )
+	m_filename ( filename ), 
+	m_loaded ( false )
 {
 	std::ifstream file(filename.c_str());
 
@@ -54,10 +55,16 @@ Model::Model(const std::string& filename, ResourceBank* resources) :
 
 		file.close();
 	}
+	else
+	{
+		std::cout << "MODEL (" << filename << ") File could not be read" << std::endl;
+	}
 }
 
 Model::~Model()
 {
+	Unload();
+
 	for (unsigned int i = 0; i < m_meshes.size(); i++)
 		delete m_meshes[i];
 }
@@ -208,22 +215,34 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 	}
 
 	t.Stop();
-	std::cout << "OBJ (" << m_filename << ") loaded " << m_meshes.size() <<" surfaces, in " << t.GetTime() << "s " << std::endl;
+	std::cout << "MODEL (" << m_filename << ") fetched  in " << t.GetTime() << "s [" << m_meshes.size() <<" surfaces]" << std::endl;
 }
 
 void Model::Draw()
 {
-	
-	for (unsigned int i = 0; i < m_meshes.size(); i++)
-		m_meshes[i]->Draw();
-	
+	if (m_loaded)
+		for (unsigned int i = 0; i < m_meshes.size(); i++)
+			m_meshes[i]->Draw();
 }
 
 void Model::Load()
 {
-
+	if (!m_loaded)
+	{
+		std::cout << "MODEL (" << m_filename << ") [LOAD NOT IMPLEMENTED]" << std::endl;
+		// generate display list/ vertex buffer?
+		m_loaded = true;
+	}
 }
 
+void Model::Unload()
+{
+	if (m_loaded)
+	{
+		// release display list/vertex buffer
+		m_loaded = false;
+	}
+}
 
 Model::OBJ_FORMAT_INDEX Model::ParseOBJIndex(const std::string& face)
 {

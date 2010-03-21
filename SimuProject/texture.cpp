@@ -11,19 +11,6 @@ Texture::Texture(const std::string &filename) :
 	m_loaded ( false ),
 	m_textureID ( 0 )
 {
-}
-
-Texture::~Texture()
-{
-	if (m_loaded)
-	{
-		glDeleteTextures(1, &m_textureID);
-		delete m_textureData;
-	}
-}
-
-void Texture::Load()
-{
 	Timer t;
 	t.Start();
 
@@ -31,38 +18,63 @@ void Texture::Load()
 
 	m_textureData = Gdiplus::Bitmap::FromFile(wfilename.c_str());
 
-	Gdiplus::BitmapData bitmapdata;
+	t.Stop();
 
-	Gdiplus::Rect lockRect(0, 0, m_textureData->GetWidth(), m_textureData->GetHeight());
-
-	if (m_textureData->LockBits(&lockRect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapdata) == Gdiplus::Ok)
-	{
-
-		glEnable(GL_TEXTURE_2D);
-		glGenTextures(1, &m_textureID);
-
-		glBindTexture(GL_TEXTURE_2D, m_textureID);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureData->GetWidth(), m_textureData->GetHeight(), 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, bitmapdata.Scan0);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		m_textureData->UnlockBits(&bitmapdata);
-
-		m_loaded = true;
-
-		t.Stop();
-		std::cout << "TEXTURE (" << m_filename << ") loaded in " << t.GetTime() << "s " << std::endl;
-
-		glDisable(GL_TEXTURE_2D);
-	}
+	if (m_textureData->GetWidth() != 0)
+		std::cout << "TEXTURE (" << m_filename << ") Fetched in " << t.GetTime() << "s " << std::endl;
 	else
-	{
-		delete m_textureData;
-		std::cout << "Error couldn't load " << m_filename << std::endl; 
+		std::cout << "TEXTURE (" << m_filename << ") File could not be read" << std::endl;
+}
 
+Texture::~Texture()
+{
+	Unload();
+}
+
+void Texture::Load()
+{
+	if (!m_loaded)
+	{
+		Gdiplus::BitmapData bitmapdata;
+
+		Gdiplus::Rect lockRect(0, 0, m_textureData->GetWidth(), m_textureData->GetHeight());
+
+		if (m_textureData->LockBits(&lockRect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapdata) == Gdiplus::Ok)
+		{
+			Timer t;
+			t.Start();
+			glEnable(GL_TEXTURE_2D);
+			glGenTextures(1, &m_textureID);
+
+			glBindTexture(GL_TEXTURE_2D, m_textureID);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureData->GetWidth(), m_textureData->GetHeight(), 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, bitmapdata.Scan0);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+			m_textureData->UnlockBits(&bitmapdata);
+
+			m_loaded = true;
+
+			glDisable(GL_TEXTURE_2D);
+
+			t.Stop();
+
+			std::cout << "TEXTURE (" << m_filename << ") loaded in " << t.GetTime() << "s " << std::endl;
+		}
 	}
+}
+
+void Texture::Unload()
+{
+	if (m_loaded)
+	{
+		glDeleteTextures(1, &m_textureID);
+		m_loaded = false;
+	}
+
+	delete m_textureData;
 }
 
 void Texture::Apply()

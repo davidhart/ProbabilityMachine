@@ -43,7 +43,7 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
-	m_modelMachine = m_resources.RequestModel("Resources/box.obj");
+	m_modelMachine = m_resources.RequestModel("Resources/machine.obj");
 	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
 
 	m_objectMachine.SetModel(m_modelMachine);
@@ -72,6 +72,8 @@ void Simulation::Load()
 			m_objectPegs.push_back(o);
 		}
 	}
+
+	m_resources.Load();
 
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER,0.0f);

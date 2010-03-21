@@ -18,6 +18,7 @@ public:
 	Texture(const std::string& filename);
 	~Texture();
 	void Load();
+	void Unload();
 	void Apply();
 };
 

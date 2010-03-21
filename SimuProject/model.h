@@ -40,11 +40,14 @@ private:
 	std::vector<Mesh*> m_meshes;
 	std::string m_filename;
 
+	bool m_loaded;
+
 public:
 	Model(const std::string& filename, ResourceBank* resources);
 	~Model();
 	void Draw();
 	void Load();
+	void Unload();
 
 private:
 	void LoadFromOBJFile(std::ifstream& file, ResourceBank* resources);

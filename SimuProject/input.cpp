@@ -19,7 +19,7 @@ Input::Input()
 	m_mouseInputRecieved = false;
 }
 
-bool Input::Callback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+bool Input::Callback(HWND, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch(message)
 	{

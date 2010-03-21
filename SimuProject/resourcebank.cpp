@@ -10,6 +10,12 @@
 using std::string;
 using std::ifstream;
 
+ResourceBank::ResourceBank() : 
+	m_loaded ( false )
+{
+
+}
+
 ResourceBank::~ResourceBank()
 {
 	for (ModelHashMap::iterator i = m_modelMap.begin(); i != m_modelMap.end(); ++i)
@@ -37,6 +43,10 @@ Model* ResourceBank::RequestModel(const std::string& model)
 	else
 	{
 		Model * m = new Model(model, this);
+		
+		if(m_loaded)
+			m->Load();
+
 		m_modelMap[model] = m;
 		return m;
 	}
@@ -51,7 +61,10 @@ Texture* ResourceBank::RequestTexture(const std::string& texture)
 	else
 	{
 		Texture *t = new Texture(texture);
-		t->Load();
+
+		if (m_loaded)
+			t->Load();
+
 		m_textureMap[texture] = t;
 		return t;
 	}
@@ -68,6 +81,38 @@ Material* ResourceBank::RequestMaterial(const std::string& material)
 		Material* m = new Material();
 		m_materialMap[material] = m;
 		return m;
+	}
+}
+
+void ResourceBank::Load()
+{
+	if (!m_loaded)
+	{
+		for (TextureHashMap::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+		{
+			i->second->Load();
+		}
+		for (ModelHashMap::iterator i = m_modelMap.begin(); i != m_modelMap.end(); ++i)
+		{
+			i->second->Load();
+		}
+		m_loaded = true;
+	}
+}
+
+void ResourceBank::Unload()
+{
+	if (m_loaded)
+	{
+		for (TextureHashMap::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+		{
+			i->second->Unload();
+		}
+		for (ModelHashMap::iterator i = m_modelMap.begin(); i != m_modelMap.end(); ++i)
+		{
+			i->second->Unload();
+		}
+		m_loaded = false;
 	}
 }
 
