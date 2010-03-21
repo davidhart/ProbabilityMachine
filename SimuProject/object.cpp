@@ -4,12 +4,12 @@
 #include <windows.h>
 #include <Gl/gl.h>
 
-Object::Object(Model *model, const Vector3f &position) : 
-	m_model ( model ),
-	m_position ( position ),
-	m_pitch ( 0.0f ),
-	m_yaw ( 0.0f ),
-	m_roll ( 0.0f )
+Object::Object() : 
+	m_model ( NULL ),
+	m_position ( 0, 0, 0 ),
+	m_pitch ( 0 ),
+	m_yaw ( 0 ),
+	m_roll ( 0 )
 {
 }
 
@@ -19,14 +19,17 @@ Object::~Object()
 
 void Object::Draw()
 {
-	glPushMatrix();
-	glRotatef(m_roll, 0, 0, 1);
-	glRotatef(m_yaw, 0, 1, 0);
-	glRotatef(m_pitch, 1, 0, 0);
+	if (m_model != NULL)
+	{
+		glPushMatrix();
+		glRotatef(m_roll, 0, 0, 1);
+		glRotatef(m_yaw, 0, 1, 0);
+		glRotatef(m_pitch, 1, 0, 0);
 
-	glTranslatef(m_position.X(), m_position.Y(), m_position.Z());
+		glTranslatef(m_position.X(), m_position.Y(), m_position.Z());
 
-	m_model->Draw();
+		m_model->Draw();
 
-	glPopMatrix();
+		glPopMatrix();
+	}
 }

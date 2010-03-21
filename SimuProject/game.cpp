@@ -33,7 +33,7 @@ int Game::Run()
 
 		m_window.Present();
 
-		/*
+		
 		accumulator += t.GetTime();
 
 		while(accumulator >= tickFrequency)
@@ -42,7 +42,7 @@ int Game::Run()
 			Update(m_window.GetInput(), tickFrequency);
 			accumulator -= tickFrequency;
 		}
-		*/
+		
 		m_window.DoEvents();
 		Update(m_window.GetInput(), t.GetTime());
 

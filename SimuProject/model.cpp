@@ -1,7 +1,7 @@
 #include "model.h"
 #include "mesh.h"
 #include "timer.h"
-#include "materialgroup.h"
+#include "resourcebank.h"
 
 #include <windows.h>
 
@@ -42,36 +42,15 @@ void Model::OBJ_FORMAT_INDEX::SetVt(int vt)
 	hasVt = true;
 }
 
-Model::Model(const std::string& filename) :
+Model::Model(const std::string& filename, ResourceBank* resources) :
 	m_filename ( filename )
 {
-	int i;
-	for (i = filename.length()-1; i >= 0; i--)
-	{
-		if (filename[i] == '.')
-			break;
-	}
-
 	std::ifstream file(filename.c_str());
 
 	// if the file could be opened
 	if(file.good())
 	{
-		// parse extension
-		if (i >= 0 && i != (signed)filename.length()-1)
-		{
-			std::string extension = filename.substr(i+1);
-			std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
-		
-			if (extension == "obj")
-			{
-				LoadFromOBJFile(file);
-			}
-			else if (extension == "md2")
-			{
-				LoadFromMD2File(file);
-			}
-		}
+		LoadFromOBJFile(file, resources);
 
 		file.close();
 	}
@@ -83,7 +62,7 @@ Model::~Model()
 		delete m_meshes[i];
 }
 
-void Model::LoadFromOBJFile(std::ifstream& file)
+void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 {
 	Timer t;
 	t.Start();
@@ -189,7 +168,7 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 
 			if (indices.size() > 0)
 			{
-				m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, &m_materialGroup.RequestMaterial(material)));
+				m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, resources->RequestMaterial(material)));
 			}
 
 			indices.clear();
@@ -211,7 +190,7 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 
 					string relativeDirLibName = m_filename.substr(0,i+1) + materialLibFileName;
 
-					m_materialGroup.LoadMaterialsFromFile(relativeDirLibName);
+					resources->LoadMaterialsFromFile(relativeDirLibName);
 				}
 		}
 		}
@@ -225,15 +204,11 @@ void Model::LoadFromOBJFile(std::ifstream& file)
 
 	if (indices.size() > 0)
 	{
-		m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, &m_materialGroup.RequestMaterial(material)));
+		m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, resources->RequestMaterial(material)));
 	}
 
 	t.Stop();
 	std::cout << "OBJ (" << m_filename << ") loaded " << m_meshes.size() <<" surfaces, in " << t.GetTime() << "s " << std::endl;
-}
-
-void Model::LoadFromMD2File(std::ifstream&)
-{
 }
 
 void Model::Draw()
@@ -246,7 +221,7 @@ void Model::Draw()
 
 void Model::Load()
 {
-	m_materialGroup.Load();
+
 }
 
 

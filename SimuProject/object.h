@@ -15,7 +15,7 @@ private:
 	float m_roll;
 
 public:
-	Object(Model* model, const Vector3f& position);
+	Object();
 	virtual ~Object();
 
 	void Draw();

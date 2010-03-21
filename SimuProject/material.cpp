@@ -4,18 +4,15 @@
 
 #include <Gl/gl.h>
 
-Material::Material(const std::string& kdMap, const Vector3f& Ka, const Vector3f& Kd, const Vector3f& Ks, float d, float Ns, int illum) :
+Material::Material(Texture* texture, const Vector3f& Ka, const Vector3f& Kd, const Vector3f& Ks, float d, float Ns, int illum) :
 		m_ambient(Ka),
 		m_diffuse(Kd),
 		m_specular(Ks),
 		m_alpha(d),
 		m_shininess(Ns),
-		m_lightingMode(illum)
+		m_lightingMode(illum),
+		m_texture(texture)
 {
-	if (!kdMap.empty())
-		m_texture = new Texture(kdMap);
-	else
-		m_texture = NULL;
 
 }
 

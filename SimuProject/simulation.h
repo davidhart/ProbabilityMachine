@@ -8,15 +8,19 @@
 #include "camera.h"
 #include <vector>
 
+#include "resourcebank.h"
+
 class Simulation : public Game
 {
 private:
 	double m_rotationX,m_rotationY;
-	Model m_modelMachine;
-	Model m_modelPeg;
+	Model* m_modelMachine;
+	Model* m_modelPeg;
 	Object m_objectMachine;
 	std::vector<Object*> m_objectPegs;
 	Camera m_camera;
+
+	ResourceBank m_resources;
 
 public: 
 	Simulation();

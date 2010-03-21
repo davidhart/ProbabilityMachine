@@ -297,10 +297,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\materialgroup.h"
-				>
-			</File>
-			<File
 				RelativePath=".\mesh.h"
 				>
 			</File>
@@ -310,6 +306,10 @@
 			</File>
 			<File
 				RelativePath=".\object.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resourcebank.h"
 				>
 			</File>
 			<File
@@ -340,10 +340,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\materialgroup.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\mesh.cpp"
 					>
 				</File>
@@ -353,6 +349,10 @@
 				</File>
 				<File
 					RelativePath=".\object.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\resourcebank.cpp"
 					>
 				</File>
 				<File

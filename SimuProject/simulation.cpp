@@ -11,30 +11,9 @@
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
-	m_modelMachine("Resources/machine.obj"),
-	m_modelPeg("Resources/peg.obj"),
-	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
-	m_objectMachine(&m_modelMachine, Vector3f(0,0,0))
+	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
 {
 	m_window.SetTitle("Simulation");
-
-	m_objectPegs.reserve(68);
-
-	for (int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 8; j++)
-		{
-			m_objectPegs.push_back(new Object(&m_modelPeg, Vector3f(-3.5f + j * 1.0f, i*1.0f + 2.5f, 0.0f)));
-		}
-	}
-
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			m_objectPegs.push_back(new Object(&m_modelPeg, Vector3f(-4.0f + j * 1.0f, i*1.0f + 3.0f, 0.0f)));
-		}
-	}
 }
 
 Simulation::~Simulation()
@@ -64,9 +43,36 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
-	m_modelMachine.Load();
-	m_modelPeg.Load();
+	m_modelMachine = m_resources.RequestModel("Resources/box.obj");
+	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
+
+	m_objectMachine.SetModel(m_modelMachine);
+
+	m_objectPegs.reserve(68);
+
 	
+	for (int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 8; j++)
+		{
+			Object * o = new Object();
+			o->SetModel(m_modelPeg);
+			o->SetPosition(Vector3f(-3.5f + j * 1.0f, i*1.0f + 2.5f, 0.0f));
+			m_objectPegs.push_back(o);
+		}
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			Object * o = new Object();
+			o->SetModel(m_modelPeg);
+			o->SetPosition(Vector3f(-4.0f + j * 1.0f, i*1.0f + 3.0f, 0.0f));
+			m_objectPegs.push_back(o);
+		}
+	}
+
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER,0.0f);
     glEnable(GL_BLEND);
