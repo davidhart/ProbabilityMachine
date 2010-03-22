@@ -22,6 +22,8 @@ Simulation::~Simulation()
 	{
 		delete m_objectPegs[i];
 	}
+
+	delete m_ball;
 }
 
 void Simulation::OnResize(int width, int height)
@@ -49,6 +51,8 @@ void Simulation::Load()
 	m_objectMachine.SetModel(m_modelMachine);
 
 	m_objectPegs.reserve(68);
+
+	m_ball = new Ball(&m_resources, Vector3f(0.0f, 10.0f, 0.0f));
 
 	
 	for (int i = 0; i < 4; i++)
@@ -136,6 +140,8 @@ void Simulation::Update(const Input& input, double frameTime)
 		m_rotationY += mouseMoveDist.Y()/300.0f;
 	}
 
+	m_ball->Update(frameTime);
+
 	//m_camera.MoveForward(-(float)frameTime*1.0f);
 }
 
@@ -157,6 +163,8 @@ void Simulation::Draw()
 	{
 		m_objectPegs[i]->Draw();
 	}
+
+	m_ball->Draw();
 
 	glPopMatrix();
 }

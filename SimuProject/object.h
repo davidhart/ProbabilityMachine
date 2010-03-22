@@ -7,7 +7,7 @@ class Model;
 
 class Object
 {
-private:
+protected:
 	Model * m_model;
 	Vector3f m_position;
 	float m_pitch;

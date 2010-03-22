@@ -23,19 +23,27 @@ public:
 	float Length()const;
 	void Unit();
 
-	Vector3f Add(const Vector3f& pV)const;
+	const Vector3f Add(const Vector3f& pV)const;
 	inline Vector3f operator+(const Vector3f& pV)const { return Add(pV); }
+	const Vector3f& operator+=(const Vector3f& rhs);
 
-	Vector3f Subtract(const Vector3f& pV)const;
+	const Vector3f Subtract(const Vector3f& pV)const;
 	inline Vector3f operator-(const Vector3f& pV)const { return Subtract(pV); }
+	const Vector3f& operator-=(const Vector3f& rhs);
 
-	Vector3f Multiply(float pScalar)const;
+	const Vector3f Multiply(float pScalar)const;
 	inline Vector3f operator*(float pScalar)const { return Multiply(pScalar); }
+	const Vector3f& operator*=(float pScalar);
 
-	Vector3f Cross(const Vector3f& pV)const;
+	const Vector3f Divide(float pScalar)const;
+	inline Vector3f operator/(float pScalar)const { return Divide(pScalar); }
+	const Vector3f& operator/=(float pScalar);
+
+	const Vector3f Cross(const Vector3f& pV)const;
 	float Dot(const Vector3f& pV)const;
 };
 
 std::istream& operator>>(std::istream& in, Vector3f& v);
+std::ostream& operator<<(std::ostream& out, Vector3f& v);
 
 #endif

@@ -26,22 +26,59 @@ void Vector3f::Unit()
 	m_Z /= len;
 }
 
-Vector3f Vector3f::Add(const Vector3f& pV) const
+const Vector3f Vector3f::Add(const Vector3f& pV) const
 {
 	return Vector3f(m_X + pV.m_X, m_Y + pV.m_Y, m_Z + pV.m_Z);
 }
 
-Vector3f Vector3f::Subtract(const Vector3f& pV) const
+const Vector3f& Vector3f::operator+=(const Vector3f& pV)
+{
+	m_X += pV.m_X;
+	m_Y += pV.m_Y;
+	m_Z += pV.m_Z;
+	return *this;
+}
+
+const Vector3f Vector3f::Subtract(const Vector3f& pV) const
 {
 	return Vector3f(m_X - pV.m_X, m_Y - pV.m_Y, m_Z - pV.m_Z);
 }
 
-Vector3f Vector3f::Multiply(float pScalar) const
+const Vector3f& Vector3f::operator-=(const Vector3f& pV)
+{
+	m_X -= pV.m_X;
+	m_Y -= pV.m_Y;
+	m_Z -= pV.m_Z;
+	return *this;
+}
+
+const Vector3f Vector3f::Multiply(float pScalar) const
 {
 	return Vector3f(m_X * pScalar, m_Y * pScalar, m_Z * pScalar);
 }
 
-Vector3f Vector3f::Cross(const Vector3f& pV) const
+const Vector3f& Vector3f::operator*=(float pScalar)
+{
+	m_X *= pScalar;
+	m_Y *= pScalar;
+	m_Z *= pScalar;
+	return *this;
+}
+
+const Vector3f Vector3f::Divide(float pScalar) const
+{
+	return Vector3f(m_X / pScalar, m_Y / pScalar, m_Z / pScalar);
+}
+
+const Vector3f& Vector3f::operator/=(float pScalar)
+{
+	m_X /= pScalar;
+	m_Y /= pScalar;
+	m_Z /= pScalar;
+	return *this;
+}
+
+const Vector3f Vector3f::Cross(const Vector3f& pV) const
 {
 	return Vector3f(m_Y*pV.m_Z - m_Z*pV.m_Y,
 					m_Z*pV.m_X - m_X*pV.m_Z,
@@ -70,4 +107,10 @@ std::istream& operator>>(std::istream& in, Vector3f& v)
 	}
 
 	return in;
+}
+
+std::ostream& operator<<(std::ostream& out, Vector3f& v)
+{
+	out << "v(" << v.X() << "," << v.Y() << "," << v.Z() << ")";
+	return out;
 }

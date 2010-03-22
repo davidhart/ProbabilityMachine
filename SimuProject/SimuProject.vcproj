@@ -304,10 +304,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\object.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resourcebank.h"
 				>
 			</File>
@@ -347,10 +343,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\object.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\resourcebank.cpp"
 					>
 				</File>
@@ -376,6 +368,38 @@
 				>
 				<File
 					RelativePath=".\timer.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="SimulationComponents"
+			>
+			<File
+				RelativePath=".\ball.h"
+				>
+			</File>
+			<File
+				RelativePath=".\object.h"
+				>
+			</File>
+			<File
+				RelativePath=".\physicsobject.h"
+				>
+			</File>
+			<Filter
+				Name="Source"
+				>
+				<File
+					RelativePath=".\ball.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\object.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\physicsobject.cpp"
 					>
 				</File>
 			</Filter>

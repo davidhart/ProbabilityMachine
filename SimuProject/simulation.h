@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "camera.h"
 #include <vector>
+#include "ball.h"
 
 #include "resourcebank.h"
 
@@ -19,6 +20,7 @@ private:
 	Object m_objectMachine;
 	std::vector<Object*> m_objectPegs;
 	Camera m_camera;
+	Ball* m_ball;
 
 	ResourceBank m_resources;
 
