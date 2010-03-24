@@ -17,6 +17,9 @@ private:
 
 	Material* m_material;
 
+	unsigned int m_displayListID;
+	bool m_loaded;
+
 	class OBJ_INDEX_CACHE
 	{
 	public:
@@ -32,6 +35,9 @@ public:
 	virtual ~Mesh();
 
 	void Draw();
+
+	void Load();
+	void Unload();
 };
 
 #endif

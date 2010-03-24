@@ -7,12 +7,13 @@ Mesh::OBJ_INDEX_CACHE::OBJ_INDEX_CACHE() :
 	next ( -1 ),
 	packedPos ( -1 )
 {
-
 }
 
 Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& normals, const Model::Vertex2fVector& texCoords,
 		   const Model::ObjIndicesVector& indices, Material* material) :
-	m_material(material)
+	m_material ( material ),
+	m_loaded ( false ),
+	m_displayListID ( 0 )
 {
 
 	m_hasVt = indices[0].hasVt;
@@ -119,12 +120,28 @@ Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& n
 
 Mesh::~Mesh()
 {
-
+	Unload();
 }
 
 void Mesh::Draw()
 {	
-	m_material->Apply();
+	if ( m_loaded )
+	{
+		m_material->Apply();
+
+		glCallList(m_displayListID);
+	}
+
+}
+
+void Mesh::Load()
+{
+
+	if (!m_loaded)
+	{
+	m_displayListID = glGenLists(1);
+
+	glNewList(m_displayListID, GL_COMPILE);
 
 	int stride = 3*sizeof(float);
 
@@ -164,4 +181,20 @@ void Mesh::Draw()
 	if (m_hasVn)
 		glDisableClientState(GL_NORMAL_ARRAY);
 
+	glEndList();
+	
+		m_loaded = true;
+	}
+
+}
+
+void Mesh::Unload()
+{
+
+	if (m_loaded)
+	{
+		glDeleteLists(m_displayListID, 1);
+
+		m_loaded = false;
+	}
 }

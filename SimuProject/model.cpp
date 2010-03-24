@@ -229,9 +229,17 @@ void Model::Load()
 {
 	if (!m_loaded)
 	{
-		std::cout << "MODEL (" << m_filename << ") [LOAD NOT IMPLEMENTED]" << std::endl;
-		// generate display list/ vertex buffer?
+		Timer t;
+		t.Start();
+
+		for (unsigned int i = 0; i < m_meshes.size(); i++)
+			m_meshes[i]->Load();
+
 		m_loaded = true;
+
+		t.Stop();
+		
+		std::cout << "MODEL (" << m_filename << ") loaded in " << t.GetTime() << "s" << std::endl;
 	}
 }
 
@@ -239,7 +247,9 @@ void Model::Unload()
 {
 	if (m_loaded)
 	{
-		// release display list/vertex buffer
+		for (unsigned int i = 0; i < m_meshes.size(); i++)
+			m_meshes[i]->Unload();
+
 		m_loaded = false;
 	}
 }
