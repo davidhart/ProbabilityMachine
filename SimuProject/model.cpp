@@ -80,7 +80,7 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 	
 	std::string token;
 
-	std::string material;
+	std::string material("(null)");
 
 	bool errorEncountered = false;
 
@@ -171,7 +171,8 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 		}
 		else if (token == "usemtl")
 		{
-			file >> material;
+			string newMaterial;
+			file >> newMaterial;
 
 			if (indices.size() > 0)
 			{
@@ -179,6 +180,8 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 			}
 
 			indices.clear();
+			
+			material = newMaterial;
 		}
 		else if (token == "mtllib")
 		{
