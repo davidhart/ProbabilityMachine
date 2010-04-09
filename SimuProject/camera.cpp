@@ -31,7 +31,7 @@ void Camera::MoveForward(float amount)
 	Matrix3x3::RotationAxis(rPitch, rightVector, m_pitch);
 
 	Vector3f v = forwardVector * (rPitch);
-	m_position = m_position.Add(v); 
+	m_position += v; 
 }
 
 void Camera::MoveStrafe(float amount)
@@ -48,7 +48,7 @@ void Camera::MoveStrafe(float amount)
 	Matrix3x3::RotationAxis(rYaw, upVector, m_yaw);
 
 	Vector3f v = strafeVector * rYaw;
-	m_position = m_position.Add(v);
+	m_position += v;
 }
 
 void Camera::RotatePitch(float amount)

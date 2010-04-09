@@ -114,6 +114,8 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 				break;
 			}
 
+			t = 1 - t;
+
 			vertTextureCoords.push_back(Vector2f(s,t));
 		}
 		else if (token == "vn")
@@ -177,9 +179,9 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 			if (indices.size() > 0)
 			{
 				m_meshes.push_back(new Mesh(vertices, vertNormals, vertTextureCoords, indices, resources->RequestMaterial(material)));
+			
+				indices.clear();
 			}
-
-			indices.clear();
 			
 			material = newMaterial;
 		}
@@ -211,6 +213,9 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 
 		file.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 	}
+
+	if (errorEncountered)
+		std::cout << "???" << std::endl;
 
 	if (indices.size() > 0)
 	{

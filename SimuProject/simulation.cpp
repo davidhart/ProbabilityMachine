@@ -45,7 +45,7 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
-	m_modelMachine = m_resources.RequestModel("Resources/machine.obj");
+	m_modelMachine = m_resources.RequestModel("Resources/machine2.obj");
 	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
 
 	m_objectMachine.SetModel(m_modelMachine);

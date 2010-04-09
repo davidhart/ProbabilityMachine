@@ -15,7 +15,6 @@ Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& n
 	m_loaded ( false ),
 	m_displayListID ( 0 )
 {
-
 	m_hasVt = indices[0].hasVt;
 	m_hasVn = indices[0].hasVn;
 
@@ -55,9 +54,10 @@ Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& n
 				packedIndicesCache[v].vn = indices[i].vn;
 			}
 
-			m_packedIndices.push_back((m_packedVertices.size()/stride)-1);
+			int packedPos = (m_packedVertices.size()/stride)-1;
 
-			packedIndicesCache[v].packedPos = (m_packedVertices.size()/stride)-1;
+			m_packedIndices.push_back(packedPos);
+			packedIndicesCache[v].packedPos = packedPos;
 		}
 		// otherwise search cache
 		else
@@ -70,7 +70,6 @@ Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& n
 				if (((!m_hasVn) || (m_hasVn && packedIndicesCache[index].vn == indices[i].vn)) && 
 					((!m_hasVt) || (m_hasVt && packedIndicesCache[index].vt == indices[i].vt)))
 				{
-
 					m_packedIndices.push_back(packedIndicesCache[index].packedPos);
 					found = true;
 					break;
@@ -109,10 +108,11 @@ Mesh::Mesh(const Model::Vertex3fVector& vertices, const Model::Vertex3fVector& n
 					packedIndicesCache.back().vn = indices[i].vn;
 				}
 
-				m_packedIndices.push_back((m_packedVertices.size()/stride)-1);
+				int packedPos = (m_packedVertices.size()/stride)-1;
 
+				m_packedIndices.push_back(packedPos);
 				packedIndicesCache[index].next = packedIndicesCache.size()-1;
-				packedIndicesCache.back().packedPos = (m_packedVertices.size()/stride)-1;
+				packedIndicesCache.back().packedPos = packedPos;
 			}
 		}
 	}
@@ -131,66 +131,55 @@ void Mesh::Draw()
 
 		glCallList(m_displayListID);
 	}
-
 }
 
 void Mesh::Load()
 {
-
 	if (!m_loaded)
 	{
-	m_displayListID = glGenLists(1);
+		m_displayListID = glGenLists(1);
 
-	glNewList(m_displayListID, GL_COMPILE);
+		if (m_displayListID != 0)
+		{
+			glNewList(m_displayListID, GL_COMPILE);
 
-	int stride = 3*sizeof(float);
+			int stride = 3*sizeof(float);
 
-	if (m_hasVt)
-		stride+=2*sizeof(float);
+			if (m_hasVt) stride += 2 * sizeof(float);
+			if (m_hasVn) stride += 3 * sizeof(float);
 
-	if (m_hasVn)
-		stride += 3*sizeof(float);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, stride,  &m_packedVertices[0]);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
+			if (m_hasVt)
+			{
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, stride, &m_packedVertices[3]); 
+			}
+
+			if (m_hasVn)
+			{
+				glEnableClientState(GL_NORMAL_ARRAY);
+				int vnOffs = m_hasVt ? 5 : 3;
+				glNormalPointer(GL_FLOAT, stride, &m_packedVertices[vnOffs]);
+			}
+
+			glDrawElements(GL_TRIANGLES, m_packedIndices.size(), GL_UNSIGNED_INT, &m_packedIndices[0]); 
+
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+			if (m_hasVt) glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			if (m_hasVn) glDisableClientState(GL_NORMAL_ARRAY);
+
+			glEndList();
 	
-	if (m_hasVt)
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	if (m_hasVn)
-		glEnableClientState(GL_NORMAL_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, stride,  &m_packedVertices[0]);
-	
-	if (m_hasVt)
-	{
-		glTexCoordPointer(2, GL_FLOAT, stride, &m_packedVertices[3]); 
+			m_loaded = true;
+		}
 	}
-
-	if (m_hasVn)
-	{
-		int vnOffs = m_hasVt ? 5 : 3;
-		glNormalPointer(GL_FLOAT, stride, &m_packedVertices[vnOffs]);
-	}
-	glDrawElements(GL_TRIANGLES, m_packedIndices.size(), GL_UNSIGNED_INT, &m_packedIndices[0]); 
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	if (m_hasVt)
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	if (m_hasVn)
-		glDisableClientState(GL_NORMAL_ARRAY);
-
-	glEndList();
-	
-		m_loaded = true;
-	}
-
 }
 
 void Mesh::Unload()
 {
-
 	if (m_loaded)
 	{
 		glDeleteLists(m_displayListID, 1);
