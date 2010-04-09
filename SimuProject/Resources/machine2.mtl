@@ -1,6 +1,6 @@
 # Blender3D MTL File: machine2.blend
-# Material Count: 2
-newmtl MaterialBack_backboard.png
+# Material Count: 4
+newmtl SideBoards_sideblocks.png
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.640000 0.640000 0.640000
@@ -8,7 +8,18 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd backboard.png
+map_Kd sideblocks.png
+
+
+newmtl Trim_trim.png
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd trim.png
 
 
 newmtl Material.003
@@ -19,5 +30,16 @@ Ks 0.300291 0.300291 0.300291
 Ni 1.000000
 d 1.000000
 illum 2
+
+
+newmtl BackBoard_backboard.png
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd backboard.png
 
 
