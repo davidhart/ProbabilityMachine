@@ -40,6 +40,9 @@ void Simulation::OnResize(int width, int height)
 	double fov = 45.0*MATH_PI/180.0f;
 	double top = tan(fov*0.5) * nearPlane;
 	glFrustum(-aspect*top, aspect*top, -top, top, nearPlane, farPlane);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	
 }
 
