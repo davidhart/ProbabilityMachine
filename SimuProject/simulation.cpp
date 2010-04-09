@@ -57,7 +57,6 @@ void Simulation::Load()
 
 	m_ball = new Ball(&m_resources, Vector3f(0.0f, 10.0f, 0.0f));
 
-	
 	for (int i = 0; i < 4; i++)
 	{
 		for(int j = 0; j < 8; j++)
@@ -89,7 +88,6 @@ void Simulation::Load()
 	glEnable(GL_TEXTURE_2D);
 	
 	glEnable(GL_CULL_FACE);
-
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -127,19 +125,10 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
 	{
-		//if (mouseMoveDist.X() != 0.0f || mouseMoveDist.Y() != 0.0f)
-		//	std::cout << mouseMoveDist.X() << "," << mouseMoveDist.Y() << std::endl;
-
-		if (mouseMoveDist.X() != 0.0f)
-		{
-			m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
-		}
-
-		if (mouseMoveDist.Y() != 0.0f)
-		{
-			m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
-		}
+		if (mouseMoveDist.X() != 0.0f) m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
+		if (mouseMoveDist.Y() != 0.0f) m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
 	}
+
 	if (input.IsButtonDown(Input::MBUTTON_LEFT))
 	{
 		m_rotationX += mouseMoveDist.X()/300.0f;
