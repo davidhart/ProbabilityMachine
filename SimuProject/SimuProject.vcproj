@@ -284,11 +284,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\directionallight.h"
+				>
+			</File>
+			<File
 				RelativePath=".\game.h"
 				>
 			</File>
 			<File
 				RelativePath=".\input.h"
+				>
+			</File>
+			<File
+				RelativePath=".\light.h"
 				>
 			</File>
 			<File
@@ -301,6 +309,10 @@
 			</File>
 			<File
 				RelativePath=".\model.h"
+				>
+			</File>
+			<File
+				RelativePath=".\pointlight.h"
 				>
 			</File>
 			<File
@@ -323,11 +335,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\directionallight.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\game.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\input.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\light.cpp"
 					>
 				</File>
 				<File
@@ -340,6 +360,10 @@
 				</File>
 				<File
 					RelativePath=".\model.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\pointlight.cpp"
 					>
 				</File>
 				<File

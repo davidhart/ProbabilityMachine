@@ -95,11 +95,13 @@ void Simulation::Load()
 	glEnable(GL_DEPTH);
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	Lighting::Enable();
+	Light::Enable(0);
 
-	GLfloat ambient [] = { 0.4f, 0.4f, 0.4f, 0.4f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	m_light0.SetPosition(Vector3f(-4 , 4 , 4));
+	m_light0.SetAmbientColour(0.4f, 0.4f, 0.4f, 1.0f);
+	m_light0.SetDiffuseColour(0.6f, 0.6f, 0.6f, 1.0f);
+	m_light0.SetSpecularColour(0.5f, 0.5f, 0.5f, 1.0f);
 }
 
 void Simulation::Unload()
@@ -131,19 +133,38 @@ void Simulation::Update(const Input& input, double frameTime)
 		m_rotationY += mouseMoveDist.Y()/300.0f;
 	}
 
-	if (input.IsKeyDown(Input::KEY_LEFT))
+	if (input.IsKeyDown(Input::KEY_A))
 		m_camera.MoveStrafe(-(float)frameTime*15.0f);
 
-	if (input.IsKeyDown(Input::KEY_RIGHT))
+	if (input.IsKeyDown(Input::KEY_D))
 		m_camera.MoveStrafe((float)frameTime*15.0f);
 
-	if (input.IsKeyDown(Input::KEY_UP))
+	if (input.IsKeyDown(Input::KEY_W))
 		m_camera.MoveForward(-(float)frameTime*15.0f);
 
-	if (input.IsKeyDown(Input::KEY_DOWN))
+	if (input.IsKeyDown(Input::KEY_S))
 		m_camera.MoveForward((float)frameTime*15.0f);
 
-	m_ball->Update(frameTime);
+	if (input.IsKeyDown(Input::KEY_RIGHT))
+		m_camera.RotateYaw((float)frameTime);
+
+	if (input.IsKeyDown(Input::KEY_LEFT))
+		m_camera.RotateYaw((float)-frameTime);
+
+	if (input.IsKeyDown(Input::KEY_UP))
+		m_camera.RotatePitch((float)-frameTime);
+
+	if (input.IsKeyDown(Input::KEY_DOWN))
+		m_camera.RotatePitch((float)frameTime);
+
+	if (input.IsKeyJustPressed(Input::KEY_NUM_PLUS) || input.IsKeyDown(Input::KEY_ENTER))
+		m_ball->Update((float)frameTime);
+
+	if (input.IsKeyJustPressed(Input::KEY_F1))
+		Lighting::Disable();
+
+	if (input.IsKeyJustPressed(Input::KEY_F2))
+		Lighting::Enable();
 
 	//m_camera.MoveForward(-(float)frameTime*1.0f);
 }
@@ -154,8 +175,7 @@ void Simulation::Draw()
 
 	m_camera.SetViewMatrix();
 
-	float lightpos [ ] = {-4 , 4 , 4,  1};
-	glLightfv( GL_LIGHT0 , GL_POSITION, lightpos );
+	m_light0.Apply(0);
 
 	glRotated(m_rotationX*180/MATH_PI, 0, 1, 0);
 	glRotated(m_rotationY*180/MATH_PI, 1, 0, 0);

@@ -115,7 +115,7 @@ const bool Input::IsKeyDown(eKey key) const
 	if (key < 0 || key > KEY_ARRAY_SIZE)
 		return false;
 
-	return m_currentInputState[key];
+	return m_currentInputState[(unsigned char)key];
 }
 
 const bool Input::IsKeyUp(eKey key) const
@@ -123,7 +123,7 @@ const bool Input::IsKeyUp(eKey key) const
 	if (key < 0 || key > KEY_ARRAY_SIZE)
 		return false;
 
-	return !m_currentInputState[key];
+	return !m_currentInputState[(unsigned char)key];
 }
 
 const bool Input::IsButtonJustPressed(eButton button) const

@@ -6,6 +6,7 @@
 #include "object.h"
 #include "texture.h"
 #include "camera.h"
+#include "pointlight.h"
 #include <vector>
 #include "ball.h"
 
@@ -20,6 +21,7 @@ private:
 	Object m_objectMachine;
 	std::vector<Object*> m_objectPegs;
 	Camera m_camera;
+	PointLight m_light0;
 	Ball* m_ball;
 
 	ResourceBank m_resources;
