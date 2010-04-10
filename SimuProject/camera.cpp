@@ -54,12 +54,26 @@ void Camera::MoveStrafe(float amount)
 void Camera::RotatePitch(float amount)
 {
 	m_pitch += amount;
+
+	if ( m_pitch > MATH_PI/2 )
+		m_pitch = MATH_PI/2;
+
+	if (m_pitch < -MATH_PI/2 )
+		m_pitch = -MATH_PI/2;
+
 	std::cout << "pitch :" << amount << std::endl;
 }
 
 void Camera::RotateYaw(float amount)
 {
 	m_yaw += amount;
+
+	while (m_yaw > MATH_PI*2)
+		m_yaw -= MATH_PI*2;
+
+	while (m_yaw < 0)
+		m_yaw += MATH_PI*2;
+
 	std::cout << "yaw :" << amount << std::endl;
 }
 
