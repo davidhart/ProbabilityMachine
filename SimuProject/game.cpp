@@ -27,23 +27,20 @@ int Game::Run()
 	{
 		t.Start();
 
-		m_window.Clear();
-
-		Draw();
-
-		m_window.Present();
-
-		
-		/*accumulator += t.GetTime();
+		accumulator += t.GetTime();
 
 		while(accumulator >= tickFrequency)
 		{
 			m_window.DoEvents();
 			Update(m_window.GetInput(), tickFrequency);
 			accumulator -= tickFrequency;
-		}*/
-		m_window.DoEvents();
-		Update(m_window.GetInput(), t.GetTime());
+		}
+
+		m_window.Clear();
+
+		Draw();
+
+		m_window.Present();
 
 		t.Stop();
 	}
