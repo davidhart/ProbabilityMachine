@@ -54,11 +54,13 @@ void Camera::MoveStrafe(float amount)
 void Camera::RotatePitch(float amount)
 {
 	m_pitch += amount;
+	std::cout << "pitch :" << amount << std::endl;
 }
 
 void Camera::RotateYaw(float amount)
 {
 	m_yaw += amount;
+	std::cout << "yaw :" << amount << std::endl;
 }
 
 void Camera::RotateRoll(float amount)
