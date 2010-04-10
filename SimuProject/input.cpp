@@ -39,9 +39,12 @@ bool Input::Callback(HWND, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_MOUSEMOVE:
-		m_currentMouseInputState.m_position.SetX((float)LOWORD(lParam));
-		m_currentMouseInputState.m_position.SetY((float)HIWORD(lParam));
-		m_mouseInputRecieved = true;
+		{
+			POINTS p = MAKEPOINTS(lParam);
+			m_currentMouseInputState.m_position.SetX((float)p.x);
+			m_currentMouseInputState.m_position.SetY((float)p.y);
+			m_mouseInputRecieved = true;
+		}
 		break;
 
 	case WM_LBUTTONDOWN:
