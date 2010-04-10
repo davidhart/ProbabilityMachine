@@ -55,26 +55,25 @@ void Camera::RotatePitch(float amount)
 {
 	m_pitch += amount;
 
+	// Limit angles to range between looking directly up/directly down
+	// to prevent camera doing backflips/frontflips
 	if ( m_pitch > MATH_PI/2 )
 		m_pitch = MATH_PI/2;
 
 	if (m_pitch < -MATH_PI/2 )
 		m_pitch = -MATH_PI/2;
-
-	std::cout << "pitch :" << amount << std::endl;
 }
 
 void Camera::RotateYaw(float amount)
 {
 	m_yaw += amount;
 
+	// Keep the yaw between 0 and 2pi
 	while (m_yaw > MATH_PI*2)
 		m_yaw -= MATH_PI*2;
 
 	while (m_yaw < 0)
 		m_yaw += MATH_PI*2;
-
-	std::cout << "yaw :" << amount << std::endl;
 }
 
 void Camera::RotateRoll(float amount)
@@ -84,9 +83,11 @@ void Camera::RotateRoll(float amount)
 
 void Camera::SetViewMatrix()
 {	
-	glRotatef(m_pitch*180/MATH_PI,1,0,0);
-	glRotatef(m_yaw*180/MATH_PI,0,1,0);
-	glRotatef(m_roll*180/MATH_PI,0,0,1);
+	// Rotate world objects to match camera orientation
+	glRotatef(m_pitch*180.0f/MATH_PI,1,0,0);
+	glRotatef(m_yaw*180.0f/MATH_PI,0,1,0);
+	glRotatef(m_roll*180.0f/MATH_PI,0,0,1);
 	
+	// Translate world away from camera
 	glTranslatef(-m_position.X(), -m_position.Y(), -m_position.Z());
 }

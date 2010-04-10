@@ -115,16 +115,8 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
 	{
-		if (mouseMoveDist.X() != 0.0f)
-		{
-			m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
-			std::cout << "x:"<<mouseMoveDist.X() << std::endl;
-		}
-		if (mouseMoveDist.Y() != 0.0f)
-		{
-			m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
-			std::cout << "y:" << mouseMoveDist.Y() << std::endl;
-		}
+		if (mouseMoveDist.X() != 0.0f) m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
+		if (mouseMoveDist.Y() != 0.0f) m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
 	}
 
 	if (input.IsButtonDown(Input::MBUTTON_LEFT))
@@ -165,8 +157,6 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsKeyJustPressed(Input::KEY_F2))
 		Lighting::Enable();
-
-	//m_camera.MoveForward(-(float)frameTime*1.0f);
 }
 
 void Simulation::Draw()
@@ -183,9 +173,7 @@ void Simulation::Draw()
 	m_objectMachine.Draw();
 
 	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
-	{
 		m_objectPegs[i]->Draw();
-	}
 
 	m_ball->Draw();
 
