@@ -125,8 +125,16 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
 	{
-		if (mouseMoveDist.X() != 0.0f) m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
-		if (mouseMoveDist.Y() != 0.0f) m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
+		if (mouseMoveDist.X() != 0.0f)
+		{
+			m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
+			std::cout << "x:"<<mouseMoveDist.X() << std::endl;
+		}
+		if (mouseMoveDist.Y() != 0.0f)
+		{
+			m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
+			std::cout << "y:" << mouseMoveDist.Y() << std::endl;
+		}
 	}
 
 	if (input.IsButtonDown(Input::MBUTTON_LEFT))
