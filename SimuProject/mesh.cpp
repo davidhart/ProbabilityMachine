@@ -187,3 +187,8 @@ void Mesh::Unload()
 		m_loaded = false;
 	}
 }
+
+unsigned int Mesh::GetTriCount()
+{
+	return m_packedIndices.size()/3;
+}

@@ -49,6 +49,8 @@ public:
 	void Load();
 	void Unload();
 
+	unsigned int GetTriCount();
+
 private:
 	void LoadFromOBJFile(std::ifstream& file, ResourceBank* resources);
 	static OBJ_FORMAT_INDEX ParseOBJIndex(const std::string& face);

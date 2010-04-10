@@ -223,7 +223,8 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 	}
 
 	t.Stop();
-	std::cout << "MODEL (" << m_filename << ") fetched  in " << t.GetTime() << "s [" << m_meshes.size() <<" surfaces]" << std::endl;
+	std::cout << "MODEL (" << m_filename << ") fetched  in " << t.GetTime() << "s [" << m_meshes.size() 
+		<< " surfaces - " << GetTriCount() << " tris]" << std::endl;
 }
 
 void Model::Draw()
@@ -260,6 +261,15 @@ void Model::Unload()
 
 		m_loaded = false;
 	}
+}
+
+unsigned int Model::GetTriCount()
+{
+	int triCount = 0;
+	for (unsigned int i = 0; i < m_meshes.size(); ++i)
+		triCount += m_meshes[i]->GetTriCount();
+
+	return triCount;
 }
 
 Model::OBJ_FORMAT_INDEX Model::ParseOBJIndex(const std::string& face)

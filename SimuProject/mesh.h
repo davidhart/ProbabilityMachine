@@ -38,6 +38,8 @@ public:
 
 	void Load();
 	void Unload();
+
+	unsigned int GetTriCount();
 };
 
 #endif

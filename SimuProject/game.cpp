@@ -42,9 +42,6 @@ int Game::Run()
 			Update(m_window.GetInput(), tickFrequency);
 			accumulator -= tickFrequency;
 		}
-		
-		m_window.DoEvents();
-		Update(m_window.GetInput(), t.GetTime());
 
 		t.Stop();
 	}
