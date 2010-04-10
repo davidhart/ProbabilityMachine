@@ -109,18 +109,6 @@ void Simulation::Unload()
 
 void Simulation::Update(const Input& input, double frameTime)
 {
-	if (input.IsKeyDown(Input::KEY_LEFT))
-		m_camera.MoveStrafe(-(float)frameTime*10.0f);
-
-	if (input.IsKeyDown(Input::KEY_RIGHT))
-		m_camera.MoveStrafe((float)frameTime*10.0f);
-
-	if (input.IsKeyDown(Input::KEY_UP))
-		m_camera.MoveForward(-(float)frameTime*10.0f);
-
-	if (input.IsKeyDown(Input::KEY_DOWN))
-		m_camera.MoveForward((float)frameTime*10.0f);
-
 	Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
@@ -142,6 +130,18 @@ void Simulation::Update(const Input& input, double frameTime)
 		m_rotationX += mouseMoveDist.X()/300.0f;
 		m_rotationY += mouseMoveDist.Y()/300.0f;
 	}
+
+	if (input.IsKeyDown(Input::KEY_LEFT))
+		m_camera.MoveStrafe(-(float)frameTime*15.0f);
+
+	if (input.IsKeyDown(Input::KEY_RIGHT))
+		m_camera.MoveStrafe((float)frameTime*15.0f);
+
+	if (input.IsKeyDown(Input::KEY_UP))
+		m_camera.MoveForward(-(float)frameTime*15.0f);
+
+	if (input.IsKeyDown(Input::KEY_DOWN))
+		m_camera.MoveForward((float)frameTime*15.0f);
 
 	m_ball->Update(frameTime);
 
