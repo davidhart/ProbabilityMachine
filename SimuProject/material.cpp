@@ -78,6 +78,8 @@ void Material::Apply()
 
 void Material::Load()
 {
+	/*
 	if (m_texture != NULL)
 		m_texture->Load();
+		*/
 }

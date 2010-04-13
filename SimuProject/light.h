@@ -1,16 +1,11 @@
 #ifndef _LIGHT_H
 #define _LIGHT_H
 
-#include <stack>
-
 class Lighting
 {
-	static std::stack<bool> m_stateStack;
 public:
-	static void PushEnable();
-	static void PushDisable();
-	static void PopState();
-	static bool IsOn();
+	static void Enable();
+	static void Disable();
 };
 
 class Light

@@ -17,14 +17,19 @@ IconDrawer3D::IconDrawer3D(const Camera& camera)
 
 void IconDrawer3D::Begin()
 {
+	glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
+	Lighting::Disable();
 	glEnable(GL_TEXTURE_2D);
-	Lighting::PushDisable();
 }
 
 void IconDrawer3D::Draw(const PointLight &pointlight, Texture *texture)
 {
 	texture->Apply();
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glPushAttrib(GL_TEXTURE_BIT);
 	glPushMatrix();
 
 	const Vector3f& position = pointlight.GetPosition();
@@ -54,12 +59,12 @@ void IconDrawer3D::Draw(const PointLight &pointlight, Texture *texture)
 	glEnd();	
 
 	glPopMatrix();
+	glPopAttrib();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void IconDrawer3D::End()
 {
-	Lighting::PopState();
-	glDisable(GL_TEXTURE_2D);
+	glPopAttrib();
 }

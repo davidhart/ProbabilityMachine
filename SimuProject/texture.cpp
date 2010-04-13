@@ -43,6 +43,9 @@ void Texture::Load()
 		{
 			Timer t;
 			t.Start();
+	
+			glPushAttrib(GL_TEXTURE_BIT);
+
 			glEnable(GL_TEXTURE_2D);
 			glGenTextures(1, &m_textureID);
 
@@ -57,7 +60,7 @@ void Texture::Load()
 
 			m_loaded = true;
 
-			glDisable(GL_TEXTURE_2D);
+			glPopAttrib();
 
 			t.Stop();
 

@@ -52,6 +52,7 @@ void Simulation::Load()
 {
 	m_modelMachine = m_resources.RequestModel("Resources/machine2.obj");
 	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
+	m_resources.RequestModel("lighticon.png");
 
 	m_objectMachine.SetModel(m_modelMachine);
 
@@ -97,7 +98,7 @@ void Simulation::Load()
 	glEnable(GL_DEPTH);
 	glEnable(GL_DEPTH_TEST);
 
-	Lighting::PushEnable();
+	Lighting::Enable();
 	Light::Enable(0);
 
 	m_light0.SetPosition(Vector3f(-4.0f , 4.0f , 4.0f));
@@ -154,11 +155,11 @@ void Simulation::Update(const Input& input, double frameTime)
 	if (input.IsKeyJustPressed(Input::KEY_NUM_PLUS) || input.IsKeyDown(Input::KEY_ENTER))
 		m_ball->Update((float)frameTime);
 
-	if (input.IsKeyJustPressed(Input::KEY_F1) && Lighting::IsOn())
-		Lighting::PopState();
+	if (input.IsKeyJustPressed(Input::KEY_F1))
+		Lighting::Disable();
 
-	if (input.IsKeyJustPressed(Input::KEY_F2) && !Lighting::IsOn())
-		Lighting::PushEnable();
+	if (input.IsKeyJustPressed(Input::KEY_F2))
+		Lighting::Enable();
 }
 
 void Simulation::Draw()
