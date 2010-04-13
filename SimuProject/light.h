@@ -1,11 +1,16 @@
 #ifndef _LIGHT_H
 #define _LIGHT_H
 
+#include <stack>
+
 class Lighting
 {
+	static std::stack<bool> m_stateStack;
 public:
-	static void Enable();
-	static void Disable();
+	static void PushEnable();
+	static void PushDisable();
+	static void PopState();
+	static bool IsOn();
 };
 
 class Light
@@ -29,7 +34,12 @@ public:
 	void SetDiffuseColour(float r, float g, float b, float a);
 	void SetSpecularColour(float r, float g, float b, float a);
 
+	inline const float* GetAmbientColour() const { return m_ambientColour; }
+	inline const float* GetDiffuseColour() const { return m_diffuseColour; }
+	inline const float* GetSpecularColour() const { return m_specularColour; }
+
 	virtual void Apply(int channel);
+
 protected:
 	static bool IsChannelValid(int channel) { return (channel >= 0 && channel < 8); }
 };

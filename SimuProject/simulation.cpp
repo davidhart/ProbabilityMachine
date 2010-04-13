@@ -8,6 +8,8 @@
 #include "Math.h" // PI
 #include <cmath>
 
+#include "icondrawer3d.h"
+
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
@@ -95,10 +97,10 @@ void Simulation::Load()
 	glEnable(GL_DEPTH);
 	glEnable(GL_DEPTH_TEST);
 
-	Lighting::Enable();
+	Lighting::PushEnable();
 	Light::Enable(0);
 
-	m_light0.SetPosition(Vector3f(-4 , 4 , 4));
+	m_light0.SetPosition(Vector3f(-4.0f , 4.0f , 4.0f));
 	m_light0.SetAmbientColour(0.4f, 0.4f, 0.4f, 1.0f);
 	m_light0.SetDiffuseColour(0.6f, 0.6f, 0.6f, 1.0f);
 	m_light0.SetSpecularColour(0.5f, 0.5f, 0.5f, 1.0f);
@@ -152,11 +154,11 @@ void Simulation::Update(const Input& input, double frameTime)
 	if (input.IsKeyJustPressed(Input::KEY_NUM_PLUS) || input.IsKeyDown(Input::KEY_ENTER))
 		m_ball->Update((float)frameTime);
 
-	if (input.IsKeyJustPressed(Input::KEY_F1))
-		Lighting::Disable();
+	if (input.IsKeyJustPressed(Input::KEY_F1) && Lighting::IsOn())
+		Lighting::PopState();
 
-	if (input.IsKeyJustPressed(Input::KEY_F2))
-		Lighting::Enable();
+	if (input.IsKeyJustPressed(Input::KEY_F2) && !Lighting::IsOn())
+		Lighting::PushEnable();
 }
 
 void Simulation::Draw()
@@ -167,15 +169,24 @@ void Simulation::Draw()
 
 	m_light0.Apply(0);
 
+	glPushMatrix();
 	glRotated(m_rotationX*180/MATH_PI, 0, 1, 0);
 	glRotated(m_rotationY*180/MATH_PI, 1, 0, 0);
 
+	
 	m_objectMachine.Draw();
 
 	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
 		m_objectPegs[i]->Draw();
 
 	m_ball->Draw();
+
+	glPopMatrix();	
+
+	IconDrawer3D icons(m_camera);
+	icons.Begin();
+	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
+	icons.End();
 
 	glPopMatrix();
 }

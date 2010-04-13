@@ -292,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\icondrawer3d.h"
+				>
+			</File>
+			<File
 				RelativePath=".\input.h"
 				>
 			</File>
@@ -340,6 +344,10 @@
 				</File>
 				<File
 					RelativePath=".\game.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\icondrawer3d.cpp"
 					>
 				</File>
 				<File

@@ -15,6 +15,8 @@ public:
 
 	void SetPosition(const Vector3f& position);
 	void Apply(int channel);
+
+	inline const Vector3f& GetPosition() const { return m_position; }
 };
 
 #endif

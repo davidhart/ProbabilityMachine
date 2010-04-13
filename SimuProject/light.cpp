@@ -3,14 +3,46 @@
 #include <windows.h>
 #include <Gl/gl.h>
 
-void Lighting::Enable()
+std::stack<bool> Lighting::m_stateStack;
+
+void Lighting::PushEnable()
 {
 	glEnable(GL_LIGHTING);
+	m_stateStack.push(true);
 }
 
-void Lighting::Disable()
+void Lighting::PushDisable()
 {
 	glDisable(GL_LIGHTING);
+	m_stateStack.push(false);
+}
+
+void Lighting::PopState()
+{
+	if (! m_stateStack.empty())
+	{
+		m_stateStack.pop();
+
+		if (m_stateStack.empty())
+		{
+			glDisable(GL_LIGHTING);
+		}
+		else
+		{
+			if (m_stateStack.top())
+				glEnable(GL_LIGHTING);
+			else
+				glDisable(GL_LIGHTING);
+		}
+	}
+}
+
+bool Lighting::IsOn()
+{
+	if (m_stateStack.empty())
+		return false;
+	else
+		return m_stateStack.top();
 }
 
 const int Light::LIGHT_CHANNEL_CONSTANTS[8] = 

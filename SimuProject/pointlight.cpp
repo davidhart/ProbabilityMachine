@@ -1,4 +1,5 @@
 #include "pointlight.h"
+#include "texture.h"
 
 #include <windows.h>
 #include <Gl/gl.h>
