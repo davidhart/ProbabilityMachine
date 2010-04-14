@@ -165,12 +165,8 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 						// + last vertex with new vertex
 						indices.push_back(indices[firstindex]);
 						indices.push_back(indices[lastindex]);
-						indices.push_back(newIndex);
 					}
-					else
-					{
-						indices.push_back(newIndex);
-					}
+					indices.push_back(newIndex);
 				}
 			}
 		}
