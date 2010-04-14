@@ -133,6 +133,7 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 		}
 		else if (token == "f")
 		{
+			// extract remainder of line to stringstream
 			std::stringstream line;
 
 			char c;
@@ -145,25 +146,31 @@ void Model::LoadFromOBJFile(std::ifstream& file, ResourceBank* resources)
 
 			std::string indexstr;
 
-			int count = 0;
+			int firstindex = indices.size();
+			int indexcount = 0;
 			while (line.good())
 			{
 				line>>indexstr;
 
 				if (!line.fail())
 				{
-				indices.push_back(ParseOBJIndex(indexstr));
+					OBJ_FORMAT_INDEX newIndex = ParseOBJIndex(indexstr);
+					indexcount++;
 
-				count++;
-
-				// triangle fan -> triangles
-				if (count > 3)
-				{
-					int end = indices.size()-1;
-					// need to add 2 more vertices, first vertex and one before
-					indices.push_back(indices[end-count+1]);
-					indices.push_back(indices[end-1]);
-				}
+					// triangle fan -> triangles
+					if (indexcount > 3)
+					{
+						int lastindex = indices.size()-1;
+						// need to add 3 vertices to make triangle, first vertex in poly 
+						// + last vertex with new vertex
+						indices.push_back(indices[firstindex]);
+						indices.push_back(indices[lastindex]);
+						indices.push_back(newIndex);
+					}
+					else
+					{
+						indices.push_back(newIndex);
+					}
 				}
 			}
 		}

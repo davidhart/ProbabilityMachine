@@ -160,6 +160,12 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsKeyJustPressed(Input::KEY_F2))
 		Lighting::Enable();
+
+	if (input.IsKeyJustPressed(Input::KEY_F3))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	if (input.IsKeyJustPressed(Input::KEY_F4))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Simulation::Draw()
