@@ -20,21 +20,12 @@ int Game::Run()
 
 	Timer t;
 
-	double accumulator = 0.0;
-	double tickFrequency = 1/120.0;		// 120hz simulation
-
 	while (m_window.IsOpen())
 	{
 		t.Start();
 
-		accumulator += t.GetTime();
-
-		while(accumulator >= tickFrequency)
-		{
-			m_window.DoEvents();
-			Update(m_window.GetInput(), tickFrequency);
-			accumulator -= tickFrequency;
-		}
+		m_window.DoEvents();
+		Update(m_window.GetInput(), t.GetTime());
 
 		m_window.Clear();
 

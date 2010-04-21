@@ -13,7 +13,9 @@
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
-	m_camera(Vector3f(0, 2, 20), 0, 0, 0)
+	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
+	m_updateFrequency( 1/120.0 ),
+	m_frameTimeAccumulator( 0.0 )
 {
 	m_window.SetTitle("Simulation");
 }
@@ -116,6 +118,14 @@ void Simulation::Update(const Input& input, double frameTime)
 {
 	Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
 
+	m_frameTimeAccumulator += frameTime;
+
+	while(m_frameTimeAccumulator >= m_updateFrequency)
+	{
+		DoSimulation(m_updateFrequency);
+		m_frameTimeAccumulator -= m_updateFrequency;
+	}
+
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
 	{
 		if (mouseMoveDist.X() != 0.0f) m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
@@ -152,9 +162,6 @@ void Simulation::Update(const Input& input, double frameTime)
 	if (input.IsKeyDown(Input::KEY_DOWN))
 		m_camera.RotatePitch((float)frameTime);
 
-	if (input.IsKeyJustPressed(Input::KEY_NUM_PLUS) || input.IsKeyDown(Input::KEY_ENTER))
-		m_ball->Update((float)frameTime);
-
 	if (input.IsKeyJustPressed(Input::KEY_F1))
 		Lighting::Disable();
 
@@ -166,6 +173,11 @@ void Simulation::Update(const Input& input, double frameTime)
 	
 	if (input.IsKeyJustPressed(Input::KEY_F4))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Simulation::DoSimulation(double timeStep)
+{
+	m_ball->Update(timeStep);
 }
 
 void Simulation::Draw()

@@ -24,6 +24,9 @@ private:
 	PointLight m_light0;
 	Ball* m_ball;
 
+	const double m_updateFrequency;
+	double m_frameTimeAccumulator;
+
 	ResourceBank m_resources;
 
 public: 
@@ -35,6 +38,7 @@ public:
 	void Update(const Input& input, double frameTime);
 	void OnResize(int width, int height);
 	void Draw();
+	void DoSimulation(double timeStep);
 };
 
 #endif
