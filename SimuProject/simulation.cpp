@@ -8,6 +8,8 @@
 #include "Math.h" // PI
 #include <cmath>
 
+#include <cstdlib>
+
 #include "icondrawer3d.h"
 
 Simulation::Simulation() :
@@ -18,6 +20,8 @@ Simulation::Simulation() :
 	m_frameTimeAccumulator( 0.0 )
 {
 	m_window.SetTitle("Simulation");
+
+	srand(0);
 }
 
 Simulation::~Simulation()
@@ -128,6 +132,15 @@ void Simulation::Update(const Input& input, double frameTime)
 	{
 		DoSimulation(m_updateFrequency);
 		m_frameTimeAccumulator -= m_updateFrequency;
+	}
+
+	if (input.IsKeyJustPressed(Input::KEY_ENTER))
+	{
+		delete m_ball;
+
+		int random = rand() % 800;
+
+		m_ball = new Ball(m_resources, Vector3f((float)random/800-0.4f, 10.0f, 0.0f));
 	}
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))

@@ -14,7 +14,7 @@ Ball::Ball(ResourceBank& resources, const Vector3f &position) :
 {
 	SetModel(resources.RequestModel("Resources/ball.obj"));
 	SetPosition(position);
-	SetMass( 0.004f );
+	SetMass( 0.003f );
 }
 
 bool Ball::CollisionTest(const Peg& peg, double& nextCollision)
@@ -99,7 +99,7 @@ bool Ball::CollisionTest(const Peg& peg, double& nextCollision)
 
 	Vector3f p = CalcTenativePosition(nextCollision);
 
-	if ((peg.GetPosition() - p).Length() < m_radius + peg.GetRadius())
+	if ((peg.GetPosition() - p).Length() <= m_radius + peg.GetRadius())
 	{
 		nextCollision = 0.0001f;
 		return true;
@@ -113,8 +113,8 @@ void Ball::CollisionResponse(const Peg& peg)
 	Vector3f normal = m_position-peg.GetPosition();
 	normal.Unit();
 
-	float impulse = -(1+0.4)*m_velocity.Dot(normal)*m_mass;
+	float impulse = -(1+0.8)*m_velocity.Dot(normal)*m_mass;
 	m_velocity += normal*impulse/m_mass;
-	ApplyForce(m_velocity*0.05f);	// some kindof friction/energy transfer
+	ApplyForce(m_velocity*-0.015f);	// some kindof friction/energy transfer
 }
 
