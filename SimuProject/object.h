@@ -22,6 +22,7 @@ public:
 
 	inline void SetModel(Model* model) { m_model = model; }
 	inline void SetPosition(const Vector3f& position) { m_position = position; }
+	inline const Vector3f& GetPosition() const { return m_position; }
 
 	inline void SetPitch(float pitch) { m_pitch = pitch; }
 	inline void SetYaw(float yaw) { m_yaw = yaw; }

@@ -22,9 +22,9 @@ Simulation::Simulation() :
 
 Simulation::~Simulation()
 {
-	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
+	for (unsigned int i = 0; i < m_pegVector.size(); i++)
 	{
-		delete m_objectPegs[i];
+		delete m_pegVector[i];
 	}
 
 	delete m_ball;
@@ -58,29 +58,31 @@ void Simulation::Load()
 
 	m_objectMachine.SetModel(m_modelMachine);
 
-	m_objectPegs.reserve(68);
+	m_pegVector.reserve(68);
 
-	m_ball = new Ball(&m_resources, Vector3f(0.0f, 10.0f, 0.0f));
+	m_ball = new Ball(m_resources, Vector3f(0.05f, 10.0f, 0.0f));
+
+	
 
 	for (int i = 0; i < 4; i++)
 	{
+		Vector3f pegPosition(-3.5f, 2.5f + (float)i, 0.0f);
+
 		for(int j = 0; j < 8; j++)
 		{
-			Object * o = new Object();
-			o->SetModel(m_modelPeg);
-			o->SetPosition(Vector3f(-3.5f + j * 1.0f, i*1.0f + 2.5f, 0.0f));
-			m_objectPegs.push_back(o);
+			m_pegVector.push_back(new Peg(m_resources, pegPosition));
+			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
 
 	for (int i = 0; i < 4; i++)
 	{
+		Vector3f pegPosition(-4.0f, 3.0f + (float)i, 0.0f);
+
 		for (int j = 0; j < 9; j++)
 		{
-			Object * o = new Object();
-			o->SetModel(m_modelPeg);
-			o->SetPosition(Vector3f(-4.0f + j * 1.0f, i*1.0f + 3.0f, 0.0f));
-			m_objectPegs.push_back(o);
+			m_pegVector.push_back(new Peg(m_resources, pegPosition));
+			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
 
@@ -177,7 +179,36 @@ void Simulation::Update(const Input& input, double frameTime)
 
 void Simulation::DoSimulation(double timeStep)
 {
-	m_ball->Update(timeStep);
+	
+	Peg* collisionPeg = NULL;
+
+	do
+	{
+		m_ball->ApplyForce(Vector3f(0, -98.1f*m_ball->GetMass(), 0));	// Gravity
+		m_ball->ApplyForce(m_ball->GetVelocity()*-0.02f);				// Air resistance
+
+		if (collisionPeg != NULL)
+		{
+			m_ball->CollisionResponse(*collisionPeg);
+			collisionPeg = NULL;
+		}
+
+		double nextCollision = timeStep;
+
+		// test for collisions
+		for (unsigned int i = 0; i < m_pegVector.size(); i++)
+		{
+			if (m_ball->CollisionTest(*m_pegVector[i], nextCollision))
+			{
+				collisionPeg = m_pegVector[i];
+			}
+		}
+
+		m_ball->Update(nextCollision);
+
+		timeStep -= nextCollision;
+
+	} while (timeStep > 0);
 }
 
 void Simulation::Draw()
@@ -195,8 +226,8 @@ void Simulation::Draw()
 	
 	m_objectMachine.Draw();
 
-	for (unsigned int i = 0; i < m_objectPegs.size(); i++)
-		m_objectPegs[i]->Draw();
+	for (unsigned int i = 0; i < m_pegVector.size(); i++)
+		m_pegVector[i]->Draw();
 
 	m_ball->Draw();
 

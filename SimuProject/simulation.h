@@ -9,6 +9,7 @@
 #include "pointlight.h"
 #include <vector>
 #include "ball.h"
+#include "peg.h"
 
 #include "resourcebank.h"
 
@@ -19,7 +20,7 @@ private:
 	Model* m_modelMachine;
 	Model* m_modelPeg;
 	Object m_objectMachine;
-	std::vector<Object*> m_objectPegs;
+	std::vector<Peg*> m_pegVector;
 	Camera m_camera;
 	PointLight m_light0;
 	Ball* m_ball;

@@ -4,6 +4,7 @@
 #include "physicsobject.h"
 
 class ResourceBank;
+class Peg;
 
 class Ball : public PhysicsObject
 {
@@ -11,8 +12,10 @@ protected:
 	float m_radius;
 
 public:
-	Ball(ResourceBank* resources, const Vector3f& position);
-	void Update(double elapsedTime);
+	Ball(ResourceBank& resources, const Vector3f& position);
+
+	bool CollisionTest(const Peg& peg, double& nextCollision);
+	void CollisionResponse(const Peg& peg);
 };
 
 #endif

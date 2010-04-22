@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="SimuProject"
 	ProjectGUID="{8913ABBF-A4AF-469E-B12D-11E4ADB05BDE}"
+	RootNamespace="SimuProject"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -416,6 +417,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\peg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\physicsobject.h"
 				>
 			</File>
@@ -428,6 +433,10 @@
 				</File>
 				<File
 					RelativePath=".\object.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\peg.cpp"
 					>
 				</File>
 				<File

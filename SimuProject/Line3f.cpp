@@ -9,6 +9,17 @@ Line3f::~Line3f()
 {
 }
 
+Vector3f Line3f::ClosestPointOnLineToPoint(const Vector3f& point) const
+{
+	Vector3f op = point-m_point;
+	float directionLength = m_direction.Length();
+	float distToClosestPointOnLine = m_direction.Dot(op)/directionLength;
+
+	return Vector3f(m_point.X() + m_direction.X()/directionLength * distToClosestPointOnLine,
+					m_point.Y() + m_direction.Y()/directionLength * distToClosestPointOnLine,
+					m_point.Z() + m_direction.Z()/directionLength * distToClosestPointOnLine);
+}
+
 float Line3f::PerpendicularDistanceToPoint(const Vector3f& point) const
 {
 	Vector3f op = point-m_point;
