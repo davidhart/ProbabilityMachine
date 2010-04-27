@@ -101,7 +101,26 @@ bool Ball::CollisionTest(const Peg& peg, double& nextCollision)
 
 	if ((peg.GetPosition() - p).Length() <= m_radius + peg.GetRadius())
 	{
-		nextCollision = 0.0001f;
+		double bottomTime = 0;
+		double topTime = nextCollision;
+		double midTime = bottomTime + (topTime-bottomTime)/2;
+
+		for (int i = 0; i < 10; i++)
+		{
+			p = CalcTenativePosition(midTime);
+			
+			if ((peg.GetPosition() - p).Length() <= m_radius + peg.GetRadius())
+			{
+				topTime = midTime;
+			}
+			else
+			{
+				bottomTime = midTime;
+			}
+		}
+
+		nextCollision = bottomTime+0.0001f;
+		
 		return true;
 	}
 
@@ -115,6 +134,6 @@ void Ball::CollisionResponse(const Peg& peg)
 
 	float impulse = -(1+0.8)*m_velocity.Dot(normal)*m_mass;
 	m_velocity += normal*impulse/m_mass;
-	ApplyForce(m_velocity*-0.015f);	// some kindof friction/energy transfer
+	ApplyForce(m_velocity*-0.03f);	// some kindof friction/energy transfer
 }
 
