@@ -105,7 +105,7 @@ bool Ball::CollisionTest(const Peg& peg, double& nextCollision)
 		double topTime = nextCollision;
 		double midTime = bottomTime + (topTime-bottomTime)/2;
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			p = CalcTenativePosition(midTime);
 			
