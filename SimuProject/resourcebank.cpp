@@ -1,6 +1,6 @@
 #include "resourcebank.h"
 
-#include "texture.h"
+#include "texturefile.h"
 #include "model.h"
 #include "material.h"
 
@@ -60,7 +60,7 @@ Texture* ResourceBank::RequestTexture(const std::string& texture)
 		return i->second;
 	else
 	{
-		Texture *t = new Texture(texture);
+		TextureFile *t = new TextureFile(texture);
 
 		if (m_loaded)
 			t->Load();

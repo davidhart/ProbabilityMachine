@@ -2,6 +2,7 @@
 
 #include "texture.h"
 
+#include <windows.h>
 #include <Gl/gl.h>
 
 Material::Material(Texture* texture, const Vector3f& Ka, const Vector3f& Kd, const Vector3f& Ks, float d, float Ns, int illum) :

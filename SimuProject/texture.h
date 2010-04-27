@@ -1,25 +1,22 @@
 #ifndef _TEXTURE_H
 #define _TEXTURE_H
 
-#include <windows.h>
-#include <gdiplus.h>
-#include <string>
+#include "vector2f.h"
 
 class Texture
 {
-private:
-	std::string m_filename;
-	Gdiplus::Bitmap* m_textureData;
-
-	unsigned int m_textureID;
+protected:
 	bool m_loaded;
+	unsigned int m_textureID;
+	Vector2f m_size;
 
 public:
-	Texture(const std::string& filename);
-	~Texture();
-	void Load();
+	Texture();
+	virtual ~Texture();
+	virtual void Load() = 0;
 	void Unload();
 	void Apply();
+	inline const Vector2f& GetSize() { return m_size; }
 };
 
 #endif

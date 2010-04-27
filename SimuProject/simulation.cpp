@@ -12,12 +12,15 @@
 
 #include "icondrawer3d.h"
 
+#include "spritebatch.h"
+
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
 	m_updateFrequency( 1/120.0 ),
-	m_frameTimeAccumulator( 0.0 )
+	m_frameTimeAccumulator( 0.0 ),
+	m_font("Arial", 24, false, false)
 {
 	m_window.SetTitle("Simulation");
 
@@ -56,6 +59,7 @@ void Simulation::OnResize(int width, int height)
 
 void Simulation::Load()
 {
+	m_font.Load();
 	m_modelMachine = m_resources.RequestModel("Resources/machine2.obj");
 	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
 	m_resources.RequestModel("lighticon.png");
@@ -119,6 +123,7 @@ void Simulation::Load()
 
 void Simulation::Unload()
 {
+	m_font.Unload();
 
 }
 
@@ -252,6 +257,12 @@ void Simulation::Draw()
 	icons.Begin();
 	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
 	icons.End();
+
+	SpriteBatch s(m_window);
+	s.Begin();
+	m_font.DrawText(s, "C: C: C: C: C:", Vector2f(0, 0));
+	//s.Draw(m_resources.RequestTexture("lighticon.png"), Vector2f(1, 0));
+	s.End();
 
 	glPopMatrix();
 }

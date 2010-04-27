@@ -13,6 +13,8 @@
 
 #include "resourcebank.h"
 
+#include "font.h"
+
 class Simulation : public Game
 {
 private:
@@ -24,6 +26,7 @@ private:
 	Camera m_camera;
 	PointLight m_light0;
 	Ball* m_ball;
+	Font m_font;
 
 	const double m_updateFrequency;
 	double m_frameTimeAccumulator;

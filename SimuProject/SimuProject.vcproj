@@ -289,6 +289,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\font.h"
+				>
+			</File>
+			<File
 				RelativePath=".\game.h"
 				>
 			</File>
@@ -325,7 +329,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\spritebatch.h"
+				>
+			</File>
+			<File
 				RelativePath=".\texture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\texturefile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\texturegdi.h"
 				>
 			</File>
 			<File
@@ -341,6 +357,10 @@
 				</File>
 				<File
 					RelativePath=".\directionallight.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\font.cpp"
 					>
 				</File>
 				<File
@@ -380,7 +400,19 @@
 					>
 				</File>
 				<File
+					RelativePath=".\spritebatch.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\texture.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\texturefile.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\texturegdi.cpp"
 					>
 				</File>
 				<File

@@ -8,12 +8,13 @@ class Model;
 class Texture;
 class Material;
 class Vector3f;
+class TextureFile;
 
 class ResourceBank
 {
 private:
 	typedef stdext::hash_map<std::string, Model*> ModelHashMap;
-	typedef stdext::hash_map<std::string, Texture*> TextureHashMap;
+	typedef stdext::hash_map<std::string, TextureFile*> TextureHashMap;
 	typedef stdext::hash_map<std::string, Material*> MaterialHashMap;
 
 	ModelHashMap m_modelMap;
