@@ -20,7 +20,7 @@ Simulation::Simulation() :
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
 	m_updateFrequency( 1/120.0 ),
 	m_frameTimeAccumulator( 0.0 ),
-	m_font("Arial", 24, false, false)
+	m_font("Tahoma", 12, false, false)
 {
 	m_window.SetTitle("Simulation");
 
@@ -54,7 +54,6 @@ void Simulation::OnResize(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
 }
 
 void Simulation::Load()
@@ -129,6 +128,8 @@ void Simulation::Unload()
 
 void Simulation::Update(const Input& input, double frameTime)
 {
+	float frameTimeFloat = (float)frameTime;
+
 	Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
 
 	m_frameTimeAccumulator += frameTime;
@@ -161,28 +162,28 @@ void Simulation::Update(const Input& input, double frameTime)
 	}
 
 	if (input.IsKeyDown(Input::KEY_A))
-		m_camera.MoveStrafe(-(float)frameTime*15.0f);
+		m_camera.MoveStrafe(-frameTimeFloat*15.0f);
 
 	if (input.IsKeyDown(Input::KEY_D))
-		m_camera.MoveStrafe((float)frameTime*15.0f);
+		m_camera.MoveStrafe(frameTimeFloat*15.0f);
 
 	if (input.IsKeyDown(Input::KEY_W))
-		m_camera.MoveForward(-(float)frameTime*15.0f);
+		m_camera.MoveForward(-frameTimeFloat*15.0f);
 
 	if (input.IsKeyDown(Input::KEY_S))
-		m_camera.MoveForward((float)frameTime*15.0f);
+		m_camera.MoveForward(frameTimeFloat*15.0f);
 
 	if (input.IsKeyDown(Input::KEY_RIGHT))
-		m_camera.RotateYaw((float)frameTime);
+		m_camera.RotateYaw(frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_LEFT))
-		m_camera.RotateYaw((float)-frameTime);
+		m_camera.RotateYaw(frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_UP))
-		m_camera.RotatePitch((float)-frameTime);
+		m_camera.RotatePitch(frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_DOWN))
-		m_camera.RotatePitch((float)frameTime);
+		m_camera.RotatePitch(frameTimeFloat);
 
 	if (input.IsKeyJustPressed(Input::KEY_F1))
 		Lighting::Disable();
@@ -260,7 +261,8 @@ void Simulation::Draw()
 
 	SpriteBatch s(m_window);
 	s.Begin();
-	m_font.DrawText(s, "C: C: C: C: C:", Vector2f(0, 0));
+	m_font.DrawText(s, "David Hart", Vector2f(0, 0));
+	s.Draw(m_resources.RequestTexture("lighticon.png"), Vector2f(0, 64));
 	//s.Draw(m_resources.RequestTexture("lighticon.png"), Vector2f(1, 0));
 	s.End();
 

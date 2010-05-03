@@ -51,7 +51,7 @@ Font::Font(const std::string& family, unsigned int height, bool bold, bool itali
 		graphics.MeasureString(L"O O", 3, &font, Gdiplus::PointF(0, 0), sf, &boundingBoxSpace);
 		m_spaceWidth = (unsigned int)(boundingBoxSpace.Width - boundingBox.Width*2);
 
-		// Hack to add extra paddding to prevent overlap problem
+		// Hack to add extra paddding to prevent gdi overlap problem
 		float padding = m_spaceWidth/2.0f; 
 
 		float x = 0.0f, y = 0.0f;

@@ -65,7 +65,7 @@ void SpriteBatch::End( )
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glLoadIdentity();
-		glTranslatef (0.375f, 0.375f, 0.0f);
+		glTranslatef (0.5f, 0.5f, 0.0f);
 
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
