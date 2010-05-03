@@ -24,7 +24,6 @@ int Game::Run()
 	{
 		t.Start();
 
-		m_window.DoEvents();
 		Update(m_window.GetInput(), t.GetTime());
 
 		m_window.Clear();
@@ -32,6 +31,8 @@ int Game::Run()
 		Draw();
 
 		m_window.Present();
+		
+		m_window.DoEvents();
 
 		t.Stop();
 	}
