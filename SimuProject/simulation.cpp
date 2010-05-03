@@ -68,7 +68,7 @@ void Simulation::Load()
 
 	m_pegVector.reserve(68);
 
-	m_ball = new Ball(m_resources, Vector3f(0.18f, 10.0f, 0.0f));
+	m_ball = new Ball(m_resources, Vector3f(0.18f, 10.0f, 0.125f));
 
 	//m_pegVector.push_back(new Peg(m_resources, Vector3f(0.0f, 6.0f, 0.0f)));
 
@@ -145,7 +145,7 @@ void Simulation::Update(const Input& input, double frameTime)
 
 		int random = rand() % 800;
 
-		m_ball = new Ball(m_resources, Vector3f((float)random/800-0.4f, 10.0f, 0.0f));
+		m_ball = new Ball(m_resources, Vector3f((float)random/800-0.4f, 10.0f, 0.125f));
 	}
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
