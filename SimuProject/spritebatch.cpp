@@ -39,6 +39,25 @@ SpriteBatch::~SpriteBatch()
 
 void SpriteBatch::Begin( )
 {
+	glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT);
+	glDisable(GL_DEPTH_TEST);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef (0.5f, 0.5f, 0.0f);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	int w,h;
+	m_window.GetSize(w,h);
+	glOrtho(0, w, h, 0, -1, 1);
+
+	glDisable(GL_LIGHTING);
+
+	glEnable(GL_TEXTURE_2D);
+
 	m_spritesToDraw.clear();
 }
 
@@ -58,26 +77,6 @@ void SpriteBatch::End( )
 
 	while (basePos != m_spritesToDraw.size())
 	{
-
-		glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT);
-		glDisable(GL_DEPTH_TEST);
-
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
-		glTranslatef (0.5f, 0.5f, 0.0f);
-
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		int w,h;
-		m_window.GetSize(w,h);
-		glOrtho(0, w, h, 0, -1, 1);
-
-		glDisable(GL_LIGHTING);
-
-		glEnable(GL_TEXTURE_2D);
-
 		unsigned int searchPos = basePos;
 		Texture* batchTexture = m_spritesToDraw[basePos].textureHandle;
 
@@ -107,17 +106,14 @@ void SpriteBatch::End( )
 
 		glEnd();
 
-		basePos = searchPos+1;
-
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-
-
-
-		glPopAttrib();
-		
+		basePos = searchPos+1;		
 	}
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glPopAttrib();
 }

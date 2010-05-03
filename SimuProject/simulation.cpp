@@ -20,7 +20,8 @@ Simulation::Simulation() :
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
 	m_updateFrequency( 1/120.0 ),
 	m_frameTimeAccumulator( 0.0 ),
-	m_font("Tahoma", 12, false, false)
+	m_font("Tahoma", 12, false, false),
+	m_ball( NULL )
 {
 	m_window.SetTitle("Simulation");
 
@@ -67,11 +68,7 @@ void Simulation::Load()
 
 	m_pegVector.reserve(68);
 
-	m_ball = new Ball(m_resources, Vector3f(0.18f, 10.0f, 0.125f));
-
-	//m_pegVector.push_back(new Peg(m_resources, Vector3f(0.0f, 6.0f, 0.0f)));
-
-	
+	SpawnBall();	
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -142,11 +139,7 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsKeyJustPressed(Input::KEY_ENTER))
 	{
-		delete m_ball;
-
-		int random = rand() % 800;
-
-		m_ball = new Ball(m_resources, Vector3f((float)random/800-0.4f, 10.0f, 0.125f));
+		SpawnBall();
 	}
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
@@ -200,7 +193,6 @@ void Simulation::Update(const Input& input, double frameTime)
 
 void Simulation::DoSimulation(double timeStep)
 {
-	
 	Peg* collisionPeg = NULL;
 
 	do
@@ -267,4 +259,14 @@ void Simulation::Draw()
 	s.End();
 
 	glPopMatrix();
+}
+
+void Simulation::SpawnBall()
+{
+	if (m_ball != NULL) delete m_ball;
+
+	int random = rand() % 9999;
+	//int random = 499;
+
+	m_ball = new Ball(m_resources, Vector3f((float)(random-4999.5f)/9999.0f*0.75f, 10.0f, 0.125f));
 }

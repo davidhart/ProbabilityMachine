@@ -43,6 +43,8 @@ public:
 	void OnResize(int width, int height);
 	void Draw();
 	void DoSimulation(double timeStep);
+
+	void SpawnBall();
 };
 
 #endif
