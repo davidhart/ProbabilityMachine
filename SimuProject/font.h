@@ -38,7 +38,7 @@ public:
 	~Font();
 	void Load();
 	void Unload();
-	void DrawText(SpriteBatch& spriteBatch, const std::string& text, Vector2f& position);
+	void DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position);
 };
 
 #endif

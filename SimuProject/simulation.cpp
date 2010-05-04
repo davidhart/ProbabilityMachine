@@ -101,6 +101,8 @@ void Simulation::Load()
 	m_planeVector.push_back(new Plane(Vector3f(1,0,0), Vector3f(-4.5f, 0, 0))); // left
 	m_planeVector.push_back(new Plane(Vector3f(-1,0,0), Vector3f(4.5f, 0, 0))); // right
 	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 6.5f, 0))); // top
+	m_planeVector.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
+	m_planeVector.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
 
 	m_resources.Load();
 
@@ -180,10 +182,10 @@ void Simulation::Update(const Input& input, double frameTime)
 		m_camera.RotateYaw(frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_LEFT))
-		m_camera.RotateYaw(frameTimeFloat);
+		m_camera.RotateYaw(-frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_UP))
-		m_camera.RotatePitch(frameTimeFloat);
+		m_camera.RotatePitch(-frameTimeFloat);
 
 	if (input.IsKeyDown(Input::KEY_DOWN))
 		m_camera.RotatePitch(frameTimeFloat);
@@ -293,12 +295,11 @@ void Simulation::Draw()
 	IconDrawer3D icons(m_camera);
 	icons.Begin();
 	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
-	icons.Draw(Vector3f(-4.5f, 5, 0.5), m_resources.RequestTexture("lighticon.png"));
 	icons.End();
 
 	SpriteBatch s(m_window);
 	s.Begin();
-	m_font.DrawText(s, "David Hart (#200879078)\nSimulation and Rendering", Vector2f(0, 0));
+	m_font.DrawText(s, "David Hart (#200879078)\n08241 Simulation and Rendering", Vector2f(0, 0));
 	s.End();
 
 	glPopMatrix();
@@ -311,5 +312,5 @@ void Simulation::SpawnBall()
 	int random = rand() % 9999;
 	//int random = 499;
 
-	m_ball = new Ball(m_resources, Vector3f((float)(random-4999.5f)/9999.0f*0.75f, 10.0f, 0.125f));
+	m_ball = new Ball(m_resources, Vector3f((float)(random-4999.5f)/9999.0f*0.75f, 10.0f, 0.126f));
 }

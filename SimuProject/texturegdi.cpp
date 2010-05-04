@@ -44,8 +44,8 @@ void TextureGdi::Load()
 
 			t.Stop();
 
-			m_size.SetX(m_textureBitmap.GetWidth());
-			m_size.SetY(m_textureBitmap.GetHeight());
+			m_size.SetX((float)m_textureBitmap.GetWidth());
+			m_size.SetY((float)m_textureBitmap.GetHeight());
 
 			std::cout << "TEXTURE GDI - loaded in " << t.GetTime() << "s " << std::endl;
 		}

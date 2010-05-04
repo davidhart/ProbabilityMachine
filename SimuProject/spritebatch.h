@@ -34,6 +34,7 @@ public:
 	void End( );
 
 private:
+	const SpriteBatch& operator=(const SpriteBatch&);
 
 };
 

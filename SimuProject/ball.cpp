@@ -63,7 +63,7 @@ void Ball::CollisionResponse(const Peg& peg)
 	Vector3f normal (m_position.X()-peg.GetPosition().X(), m_position.Y()-peg.GetPosition().Y(), 0.0f);
 	normal.Unit();
 
-	float impulse = -(1+0.8)*m_velocity.Dot(normal);
+	float impulse = -(1+0.8f)*m_velocity.Dot(normal);
 	m_velocity += normal*impulse;
 	ApplyForce(m_velocity*-0.03f);	// some kindof friction/energy transfer
 }
@@ -105,7 +105,7 @@ bool Ball::CollisionTest(const Plane& plane, double& nextCollision)
 
 void Ball::CollisionResponse(const Plane& plane)
 {	
-	float impulse = -(1+0.8)*m_velocity.Dot(plane.GetNormal());
+	float impulse = -(1+0.8f)*m_velocity.Dot(plane.GetNormal());
 	m_velocity += plane.GetNormal()*impulse;
 
 	ApplyForce(plane.GetNormal() * -plane.GetNormal().Dot(m_force));

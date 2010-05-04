@@ -64,8 +64,8 @@ void TextureFile::Load()
 
 			t.Stop();
 
-			m_size.SetX(m_textureData->GetWidth());
-			m_size.SetY(m_textureData->GetHeight());
+			m_size.SetX((float)m_textureData->GetWidth());
+			m_size.SetY((float)m_textureData->GetHeight());
 
 			std::cout << "TEXTURE (" << m_filename << ") loaded in " << t.GetTime() << "s " << std::endl;
 		}

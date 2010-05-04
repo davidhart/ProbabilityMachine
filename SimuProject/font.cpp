@@ -26,7 +26,27 @@ Font::Font(const std::string& family, unsigned int height, bool bold, bool itali
 	std::wstring wfamily(family.length(), L' ');
 	std::copy(family.begin(), family.end(), wfamily.begin());
 
-	Gdiplus::Font font(wfamily.c_str(), (Gdiplus::REAL)height, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
+
+	Gdiplus::FontStyle fs = Gdiplus::FontStyleRegular;
+
+	if (bold)
+	{
+		if (italic)
+		{
+			fs = Gdiplus::FontStyleBoldItalic;
+		}
+		else
+		{
+			fs = Gdiplus::FontStyleBold;
+		}
+	}
+	else if (italic)
+	{
+		fs = Gdiplus::FontStyleItalic;
+	}
+
+	Gdiplus::Font font(wfamily.c_str(), (Gdiplus::REAL)height, fs, Gdiplus::UnitPixel);
+
 	Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 255, 255));
 	const Gdiplus::StringFormat * sf = Gdiplus::StringFormat::GenericTypographic();
 
@@ -140,7 +160,7 @@ void Font::Unload()
 	}
 }
 
-void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, Vector2f& position)
+void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position)
 {
 	Vector2f currentPosition = position;
 
