@@ -11,7 +11,7 @@ private:
 	float m_radius;
 
 public:
-	Peg(ResourceBank& resourcebank, Vector3f& position);
+	Peg(ResourceBank& resourcebank, const Vector3f& position);
 	inline float GetRadius() const { return m_radius; }
 };
 

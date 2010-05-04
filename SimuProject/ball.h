@@ -6,6 +6,7 @@
 class ResourceBank;
 class Peg;
 class Plane;
+class PlaneSegment;
 
 class Ball : public PhysicsObject
 {
@@ -20,6 +21,9 @@ public:
 
 	bool CollisionTest(const Plane& plane, double& nextCollision);
 	void CollisionResponse(const Plane& plane);
+
+	bool CollisionTest(const PlaneSegment& planeSegment, double& nextCollision);
+	void CollisionResponse(const PlaneSegment& planeSegment);
 };
 
 #endif

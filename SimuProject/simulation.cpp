@@ -31,14 +31,13 @@ Simulation::Simulation() :
 Simulation::~Simulation()
 {
 	for (unsigned int i = 0; i < m_pegVector.size(); i++)
-	{
 		delete m_pegVector[i];
-	}
 
 	for (unsigned int i = 0; i < m_planeVector.size(); i++)
-	{
 		delete m_planeVector[i];
-	}
+
+	for (unsigned int i = 0; i < m_planeSegVector.size(); i++)
+		delete m_planeSegVector[i];
 
 	delete m_ball;
 }
@@ -75,6 +74,8 @@ void Simulation::Load()
 
 	SpawnBall();	
 
+	//m_pegVector.push_back(new Peg(m_resources, Vector3f(0, 3.0f, 0)));
+	
 	for (int i = 0; i < 4; i++)
 	{
 		Vector3f pegPosition(-3.5f, 2.5f + (float)i, 0.0f);
@@ -103,6 +104,24 @@ void Simulation::Load()
 	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 6.5f, 0))); // top
 	m_planeVector.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
 	m_planeVector.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
+
+	/*
+	m_planeSegVector.push_back(new PlaneSegment(Vector3f(-0.707,0.707,0), Vector3f(0, 6, 0), 
+		Vector3f(0.5f, 6.5f, 0), Vector3f(-0.5f, 6, 1)));
+
+	m_planeSegVector.push_back(new PlaneSegment(Vector3f(0.707,0.707,0), Vector3f(0, 6, 0), 
+		Vector3f(-0.5f, 6.5f, 0), Vector3f(-0.5f, 6, 1)));
+	*/
+
+	const float dividerHeight = 2.0f;
+	const float dividerWidth = 1.0f;
+	for (float dividerPos = -3.5f; dividerPos <= 3.5f; dividerPos += 1.0f)
+	{
+		m_planeSegVector.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(dividerPos+0.05f, 0, 0), 
+			Vector3f(dividerPos+0.05f, dividerHeight, 0), Vector3f(dividerPos+0.05f, 0, dividerWidth)));
+		m_planeSegVector.push_back(new PlaneSegment(Vector3f(-1,0,0), Vector3f(dividerPos-0.05f, 0, 0), 
+			Vector3f(dividerPos-0.05f, dividerHeight, 0), Vector3f(dividerPos-0.05f, 0, dividerWidth)));
+	}
 
 	m_resources.Load();
 
@@ -207,6 +226,7 @@ void Simulation::DoSimulation(double timeStep)
 {
 	Peg* collisionPeg = NULL;
 	Plane* collisionPlane = NULL;
+	PlaneSegment* collisionPlaneSegment = NULL;
 
 	do
 	{
@@ -223,27 +243,15 @@ void Simulation::DoSimulation(double timeStep)
 			m_ball->CollisionResponse(*collisionPlane);
 			collisionPlane = NULL;
 		}
+		else if (collisionPlaneSegment != NULL)
+		{
+			m_ball->CollisionResponse(*collisionPlaneSegment);
+			collisionPlaneSegment = NULL;
+		}
 
 		double nextCollision = timeStep;
 
 		// test for collisions
-		for (unsigned int i = 0; i < m_pegVector.size(); i++)
-		{
-			double nextCollisionTemp = nextCollision;
-			if (m_ball->CollisionTest(*m_pegVector[i],  nextCollisionTemp))
-			{
-				if (nextCollisionTemp == 0.0f)
-				{
-					m_ball->CollisionResponse(*m_pegVector[i]);
-				}
-				else
-				{
-					nextCollision = nextCollisionTemp;
-					collisionPeg = m_pegVector[i];
-				}
-			}
-		}
-
 		for (unsigned int i = 0; i < m_planeVector.size(); i++)
 		{
 			double nextCollisionTemp = nextCollision;
@@ -258,7 +266,44 @@ void Simulation::DoSimulation(double timeStep)
 				{
 					nextCollision = nextCollisionTemp;
 					collisionPlane = m_planeVector[i];
-					collisionPeg = NULL;
+				}
+			}
+		}
+		
+		for (unsigned int i = 0; i < m_planeSegVector.size(); i++)
+		{
+			double nextCollisionTemp = nextCollision;
+			
+			if (m_ball->CollisionTest(*m_planeSegVector[i], nextCollisionTemp))
+			{
+				if (nextCollisionTemp == 0.0f)
+				{
+					m_ball->CollisionResponse(*m_planeSegVector[i]);
+				}
+				else
+				{
+					nextCollision = nextCollisionTemp;
+					collisionPlaneSegment = m_planeSegVector[i];
+					collisionPlane = NULL;
+				}
+			}
+		}
+
+		for (unsigned int i = 0; i < m_pegVector.size(); i++)
+		{
+			double nextCollisionTemp = nextCollision;
+			if (m_ball->CollisionTest(*m_pegVector[i],  nextCollisionTemp))
+			{
+				if (nextCollisionTemp == 0.0f)
+				{
+					m_ball->CollisionResponse(*m_pegVector[i]);
+				}
+				else
+				{
+					nextCollision = nextCollisionTemp;
+					collisionPeg = m_pegVector[i];
+					collisionPlane = NULL;
+					collisionPlaneSegment = NULL;
 				}
 			}
 		}

@@ -460,6 +460,10 @@
 				RelativePath=".\plane.h"
 				>
 			</File>
+			<File
+				RelativePath=".\planesegment.h"
+				>
+			</File>
 			<Filter
 				Name="Source"
 				>
@@ -481,6 +485,10 @@
 				</File>
 				<File
 					RelativePath=".\plane.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\planesegment.cpp"
 					>
 				</File>
 			</Filter>

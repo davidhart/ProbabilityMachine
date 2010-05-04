@@ -10,10 +10,11 @@
 #include <vector>
 #include "ball.h"
 #include "peg.h"
+#include "plane.h"
+#include "planesegment.h"
 
 #include "resourcebank.h"
 
-#include "plane.h"
 #include "font.h"
 
 class Simulation : public Game
@@ -25,6 +26,7 @@ private:
 	Object m_objectMachine;
 	std::vector<Peg*> m_pegVector;
 	std::vector<Plane*> m_planeVector;
+	std::vector<PlaneSegment*> m_planeSegVector;
 	Camera m_camera;
 	PointLight m_light0;
 	Ball* m_ball;
