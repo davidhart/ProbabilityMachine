@@ -72,7 +72,7 @@ bool Ball::CollisionTest(const Plane& plane, double& nextCollision)
 {
 	Vector3f p = CalcTenativePosition(nextCollision);
 
-	if ( plane.GetNormal().Dot(m_position - plane.GetPoint()+ plane.GetNormal()*m_radius) > 0 )
+	if ( plane.GetNormal().Dot(m_position - (plane.GetPoint()+plane.GetNormal()*m_radius)) > -0.001f )
 	{
 		if ( plane.GetNormal().Dot(p - (plane.GetPoint()+plane.GetNormal()*m_radius)) <= 0)
 		{

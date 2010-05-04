@@ -100,7 +100,7 @@ void Simulation::Load()
 	m_planeVector.push_back(new Plane(Vector3f(0,1,0), Vector3f(0, 0.5f, 0)));  // bottom
 	m_planeVector.push_back(new Plane(Vector3f(1,0,0), Vector3f(-4.5f, 0, 0))); // left
 	m_planeVector.push_back(new Plane(Vector3f(-1,0,0), Vector3f(4.5f, 0, 0))); // right
-//	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 7.0f, 0))); // top
+	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 6.5f, 0))); // top
 
 	m_resources.Load();
 
