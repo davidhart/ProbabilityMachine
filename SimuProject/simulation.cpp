@@ -344,7 +344,7 @@ void Simulation::Draw()
 
 	SpriteBatch s(m_window);
 	s.Begin();
-	m_font.DrawText(s, "David Hart (#200879078)\n08241 Simulation and Rendering", Vector2f(0, 0));
+	m_font.DrawText(s, "David Hart (#200879078)\n08241 Simulation and Rendering", Vector2f(1, 0));
 	s.End();
 
 	glPopMatrix();
