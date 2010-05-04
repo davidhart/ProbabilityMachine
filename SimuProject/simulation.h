@@ -13,6 +13,7 @@
 
 #include "resourcebank.h"
 
+#include "plane.h"
 #include "font.h"
 
 class Simulation : public Game
@@ -23,6 +24,7 @@ private:
 	Model* m_modelPeg;
 	Object m_objectMachine;
 	std::vector<Peg*> m_pegVector;
+	std::vector<Plane*> m_planeVector;
 	Camera m_camera;
 	PointLight m_light0;
 	Ball* m_ball;

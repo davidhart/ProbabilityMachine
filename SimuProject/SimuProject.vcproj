@@ -456,6 +456,10 @@
 				RelativePath=".\physicsobject.h"
 				>
 			</File>
+			<File
+				RelativePath=".\plane.h"
+				>
+			</File>
 			<Filter
 				Name="Source"
 				>
@@ -473,6 +477,10 @@
 				</File>
 				<File
 					RelativePath=".\physicsobject.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\plane.cpp"
 					>
 				</File>
 			</Filter>

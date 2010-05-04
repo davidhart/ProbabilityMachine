@@ -16,9 +16,12 @@ public:
 	IconDrawer3D(const Camera& camera);
 	void Begin();
 	void Draw(const PointLight& pointlight, Texture* texture);
+	void Draw(const Vector3f& position, Texture* texture);
 	void End();
 
 private:
+	
+	void Draw(const Vector3f& position, Texture* texture, const float * colour);
 	const IconDrawer3D& operator=(const IconDrawer3D& rhs);
 };
 

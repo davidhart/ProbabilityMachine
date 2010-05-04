@@ -5,6 +5,7 @@
 
 class ResourceBank;
 class Peg;
+class Plane;
 
 class Ball : public PhysicsObject
 {
@@ -16,6 +17,9 @@ public:
 
 	bool CollisionTest(const Peg& peg, double& nextCollision);
 	void CollisionResponse(const Peg& peg);
+
+	bool CollisionTest(const Plane& plane, double& nextCollision);
+	void CollisionResponse(const Plane& plane);
 };
 
 #endif

@@ -35,6 +35,11 @@ Simulation::~Simulation()
 		delete m_pegVector[i];
 	}
 
+	for (unsigned int i = 0; i < m_planeVector.size(); i++)
+	{
+		delete m_planeVector[i];
+	}
+
 	delete m_ball;
 }
 
@@ -91,6 +96,11 @@ void Simulation::Load()
 			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
+
+	m_planeVector.push_back(new Plane(Vector3f(0,1,0), Vector3f(0, 0.5f, 0)));  // bottom
+	m_planeVector.push_back(new Plane(Vector3f(1,0,0), Vector3f(-4.5f, 0, 0))); // left
+	m_planeVector.push_back(new Plane(Vector3f(-1,0,0), Vector3f(4.5f, 0, 0))); // right
+//	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 7.0f, 0))); // top
 
 	m_resources.Load();
 
@@ -194,6 +204,7 @@ void Simulation::Update(const Input& input, double frameTime)
 void Simulation::DoSimulation(double timeStep)
 {
 	Peg* collisionPeg = NULL;
+	Plane* collisionPlane = NULL;
 
 	do
 	{
@@ -205,15 +216,48 @@ void Simulation::DoSimulation(double timeStep)
 			m_ball->CollisionResponse(*collisionPeg);
 			collisionPeg = NULL;
 		}
+		else if (collisionPlane != NULL)
+		{
+			m_ball->CollisionResponse(*collisionPlane);
+			collisionPlane = NULL;
+		}
 
 		double nextCollision = timeStep;
 
 		// test for collisions
 		for (unsigned int i = 0; i < m_pegVector.size(); i++)
 		{
-			if (m_ball->CollisionTest(*m_pegVector[i], nextCollision))
+			double nextCollisionTemp = nextCollision;
+			if (m_ball->CollisionTest(*m_pegVector[i],  nextCollisionTemp))
 			{
-				collisionPeg = m_pegVector[i];
+				if (nextCollisionTemp == 0.0f)
+				{
+					m_ball->CollisionResponse(*m_pegVector[i]);
+				}
+				else
+				{
+					nextCollision = nextCollisionTemp;
+					collisionPeg = m_pegVector[i];
+				}
+			}
+		}
+
+		for (unsigned int i = 0; i < m_planeVector.size(); i++)
+		{
+			double nextCollisionTemp = nextCollision;
+
+			if (m_ball->CollisionTest(*m_planeVector[i], nextCollisionTemp))
+			{
+				if (nextCollisionTemp == 0.0f)
+				{
+					m_ball->CollisionResponse(*m_planeVector[i]);
+				}
+				else
+				{
+					nextCollision = nextCollisionTemp;
+					collisionPlane = m_planeVector[i];
+					collisionPeg = NULL;
+				}
 			}
 		}
 
@@ -249,13 +293,12 @@ void Simulation::Draw()
 	IconDrawer3D icons(m_camera);
 	icons.Begin();
 	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
+	icons.Draw(Vector3f(-4.5f, 5, 0.5), m_resources.RequestTexture("lighticon.png"));
 	icons.End();
 
 	SpriteBatch s(m_window);
 	s.Begin();
-	m_font.DrawText(s, "David Hart", Vector2f(0, 0));
-	s.Draw(m_resources.RequestTexture("lighticon.png"), Vector2f(0, 64));
-	//s.Draw(m_resources.RequestTexture("lighticon.png"), Vector2f(1, 0));
+	m_font.DrawText(s, "David Hart (#200879078)\nSimulation and Rendering", Vector2f(0, 0));
 	s.End();
 
 	glPopMatrix();

@@ -2,6 +2,7 @@
 
 #include "resourcebank.h"
 #include "peg.h"
+#include "plane.h"
 
 #include "line3f.h"
 
@@ -49,7 +50,7 @@ bool Ball::CollisionTest(const Peg& peg, double& nextCollision)
 			}
 		}
 
-		nextCollision = bottomTime+0.0001f;
+		nextCollision = bottomTime;
 		
 		return true;
 	}
@@ -62,8 +63,51 @@ void Ball::CollisionResponse(const Peg& peg)
 	Vector3f normal (m_position.X()-peg.GetPosition().X(), m_position.Y()-peg.GetPosition().Y(), 0.0f);
 	normal.Unit();
 
-	float impulse = -(1+0.8)*m_velocity.Dot(normal)*m_mass;
-	m_velocity += normal*impulse/m_mass;
+	float impulse = -(1+0.8)*m_velocity.Dot(normal);
+	m_velocity += normal*impulse;
 	ApplyForce(m_velocity*-0.03f);	// some kindof friction/energy transfer
 }
 
+bool Ball::CollisionTest(const Plane& plane, double& nextCollision)
+{
+	Vector3f p = CalcTenativePosition(nextCollision);
+
+	if ( plane.GetNormal().Dot(m_position - plane.GetPoint()+ plane.GetNormal()*m_radius) > 0 )
+	{
+		if ( plane.GetNormal().Dot(p - (plane.GetPoint()+plane.GetNormal()*m_radius)) <= 0)
+		{
+			double bottomTime = 0;
+			double topTime = nextCollision;
+			double midTime = bottomTime + (topTime-bottomTime)/2;
+
+			for (int i = 0; i < 5; i++)
+			{
+				p = CalcTenativePosition(midTime);
+
+				if (plane.GetNormal().Dot(p - (plane.GetPoint()+plane.GetNormal()*m_radius)) <= 0)
+				{
+					topTime = midTime;
+				}
+				else
+				{
+					bottomTime = midTime;
+				}
+			}
+
+			nextCollision = bottomTime;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Ball::CollisionResponse(const Plane& plane)
+{	
+	float impulse = -(1+0.8)*m_velocity.Dot(plane.GetNormal());
+	m_velocity += plane.GetNormal()*impulse;
+
+	ApplyForce(plane.GetNormal() * -plane.GetNormal().Dot(m_force));
+	ApplyForce(m_velocity*-0.03f);	// some kindof friction/energy transfer
+}

@@ -17,6 +17,7 @@ public:
 	inline const Vector3f& GetVelocity() const { return m_velocity; } 
 
 	inline void ApplyForce(const Vector3f& force) { m_force += force; }
+	inline const Vector3f& GetForce() const { return m_force; }
 
 	inline void SetMass(float mass) { m_mass = mass; }
 	inline float GetMass() const { return m_mass; }
