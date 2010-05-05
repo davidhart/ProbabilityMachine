@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\icancollidewithball.h"
+				>
+			</File>
+			<File
 				RelativePath=".\object.h"
 				>
 			</File>

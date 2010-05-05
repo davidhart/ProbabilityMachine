@@ -14,6 +14,7 @@
 #include "planesegment.h"
 
 #include "resourcebank.h"
+#include "icancollidewithball.h"
 
 #include "font.h"
 
@@ -25,14 +26,18 @@ private:
 	Model* m_modelPeg;
 	Object m_objectMachine;
 	std::vector<Peg*> m_pegVector;
-	std::vector<Plane*> m_planeVector;
-	std::vector<PlaneSegment*> m_planeSegVector;
+	std::vector<ICanCollideWithBall*> m_obstacles;
+	Plane* m_floor;
 	std::vector<Ball*> m_ballVector;
 	Camera m_camera;
 	PointLight m_light0;
 	Font m_font;
 
+	int m_ballsDropped;
+	int m_ballsCollected[9];
+
 	const double m_updateFrequency;
+	const unsigned int m_maxBalls;
 	double m_frameTimeAccumulator;
 
 	ResourceBank m_resources;

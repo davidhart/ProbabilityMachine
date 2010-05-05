@@ -15,6 +15,9 @@ public:
 
 	inline const Vector3f& GetTopPoint() const { return m_topPoint; }
 	inline const Vector3f& GetFarPoint() const { return m_farPoint; }
+
+	bool CollisionTest(Ball& ball, double& nextCollision);
+	void CollisionResponse(Ball& ball);
 };
 
 #endif

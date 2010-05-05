@@ -2,8 +2,9 @@
 #define _PLANE_H
 
 #include "Vector3f.h"
+#include "icancollidewithball.h"
 
-class Plane
+class Plane : public ICanCollideWithBall
 {
 private:
 	Vector3f m_normal;
@@ -14,6 +15,9 @@ public:
 	
 	inline const Vector3f& GetNormal() const { return m_normal; }
 	inline const Vector3f& GetOrigin() const { return m_origin; }
+
+	bool CollisionTest(Ball& ball, double& nextCollision);
+	void CollisionResponse(Ball& ball);
 };
 
 #endif

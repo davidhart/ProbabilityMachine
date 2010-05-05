@@ -7,8 +7,9 @@
 
 #include "Math.h" // PI
 #include <cmath>
+#include <cstdlib> // rand
 
-#include <cstdlib>
+#include <sstream>
 
 #include "icondrawer3d.h"
 
@@ -18,25 +19,24 @@ Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
 	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
-	m_updateFrequency( 1/120.0 ),
+	m_updateFrequency( 1/80.0 ),
+	m_maxBalls ( 20 ),
 	m_frameTimeAccumulator( 0.0 ),
-	m_font("Tahoma", 12, false, false)
+	m_font("Tahoma", 12, false, false),
+	m_ballsDropped( 0 )
 {
 	m_window.SetTitle("Simulation");
+
+	for (int i = 0; i < 9; i++)
+		m_ballsCollected[i] = 0;
 
 	srand(0);
 }
 
 Simulation::~Simulation()
 {
-	for (unsigned int i = 0; i < m_pegVector.size(); i++)
-		delete m_pegVector[i];
-
-	for (unsigned int i = 0; i < m_planeVector.size(); i++)
-		delete m_planeVector[i];
-
-	for (unsigned int i = 0; i < m_planeSegVector.size(); i++)
-		delete m_planeSegVector[i];
+	for (unsigned int i = 0; i < m_obstacles.size(); i++)
+		delete m_obstacles[i];
 
 	for (unsigned int i = 0; i < m_ballVector.size(); i++)
 		delete m_ballVector[i];
@@ -70,19 +70,41 @@ void Simulation::Load()
 
 	m_objectMachine.SetModel(m_modelMachine);
 
-	m_pegVector.reserve(68);
+	m_obstacles.reserve(92);
 
-	SpawnBall();	
+	m_floor = new Plane(Vector3f(0,1,0), Vector3f(0, 0.5f, 0)); // bottom
+	m_obstacles.push_back(m_floor);  
+	m_obstacles.push_back(new Plane(Vector3f(1,0,0), Vector3f(-4.5f, 0, 0))); // left
+	m_obstacles.push_back(new Plane(Vector3f(-1,0,0), Vector3f(4.5f, 0, 0))); // right
+	m_obstacles.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 6.5f, 0))); // top
+	m_obstacles.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
+	m_obstacles.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
 
-	//m_pegVector.push_back(new Peg(m_resources, Vector3f(0, 3.0f, 0)));
-	
+	const float dividerHeight = 2.18f;
+	const float dividerWidth = 1.0f;
+
+	m_obstacles.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(-0.5f, 7.0f, 0), 
+		Vector3f(-0.5f, 6+7.0f, 0), Vector3f(-0.5f, 7.0f, 1)));
+	m_obstacles.push_back(new PlaneSegment(Vector3f(-1,0,0), Vector3f(0.5f, 7.0f, 0), 
+		Vector3f(0.5f, 6+7.0f, 0), Vector3f(0.5f, 7.0f, 1)));
+
+	for (float dividerPos = -3.5f; dividerPos <= 3.5f; dividerPos += 1.0f)
+	{
+		m_obstacles.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(dividerPos+0.05f, 0, 0), 
+			Vector3f(dividerPos+0.05f, dividerHeight, 0), Vector3f(dividerPos+0.05f, 0, dividerWidth)));
+		m_obstacles.push_back(new PlaneSegment(Vector3f(-1,0,0), Vector3f(dividerPos-0.05f, 0, 0), 
+			Vector3f(dividerPos-0.05f, dividerHeight, 0), Vector3f(dividerPos-0.05f, 0, dividerWidth)));
+	}
+
 	for (int i = 0; i < 4; i++)
 	{
 		Vector3f pegPosition(-3.5f, 2.5f + (float)i, 0.0f);
 
 		for(int j = 0; j < 8; j++)
 		{
-			m_pegVector.push_back(new Peg(m_resources, pegPosition));
+			Peg* p = new Peg(m_resources, pegPosition);
+			m_obstacles.push_back(p);
+			m_pegVector.push_back(p);
 			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
@@ -93,35 +115,15 @@ void Simulation::Load()
 
 		for (int j = 0; j < 9; j++)
 		{
-			m_pegVector.push_back(new Peg(m_resources, pegPosition));
+			Peg* p = new Peg(m_resources, pegPosition);
+			m_obstacles.push_back(p);
+			m_pegVector.push_back(p);
 			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
 
-	m_planeVector.push_back(new Plane(Vector3f(0,1,0), Vector3f(0, 0.5f, 0)));  // bottom
-	m_planeVector.push_back(new Plane(Vector3f(1,0,0), Vector3f(-4.5f, 0, 0))); // left
-	m_planeVector.push_back(new Plane(Vector3f(-1,0,0), Vector3f(4.5f, 0, 0))); // right
-	m_planeVector.push_back(new Plane(Vector3f(0,-1,0), Vector3f(0, 6.5f, 0))); // top
-	m_planeVector.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
-	m_planeVector.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
+	SpawnBall();
 
-	/*
-	m_planeSegVector.push_back(new PlaneSegment(Vector3f(-0.707,0.707,0), Vector3f(0, 6, 0), 
-		Vector3f(0.5f, 6.5f, 0), Vector3f(-0.5f, 6, 1)));
-
-	m_planeSegVector.push_back(new PlaneSegment(Vector3f(0.707,0.707,0), Vector3f(0, 6, 0), 
-		Vector3f(-0.5f, 6.5f, 0), Vector3f(-0.5f, 6, 1)));
-	*/
-
-	const float dividerHeight = 2.0f;
-	const float dividerWidth = 1.0f;
-	for (float dividerPos = -3.5f; dividerPos <= 3.5f; dividerPos += 1.0f)
-	{
-		m_planeSegVector.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(dividerPos+0.05f, 0, 0), 
-			Vector3f(dividerPos+0.05f, dividerHeight, 0), Vector3f(dividerPos+0.05f, 0, dividerWidth)));
-		m_planeSegVector.push_back(new PlaneSegment(Vector3f(-1,0,0), Vector3f(dividerPos-0.05f, 0, 0), 
-			Vector3f(dividerPos-0.05f, dividerHeight, 0), Vector3f(dividerPos-0.05f, 0, dividerWidth)));
-	}
 
 	m_resources.Load();
 
@@ -168,10 +170,16 @@ void Simulation::Update(const Input& input, double frameTime)
 		m_frameTimeAccumulator -= m_updateFrequency;
 	}
 
-	if (input.IsKeyDown(Input::KEY_ENTER))
+	if (input.IsKeyJustPressed(Input::KEY_ENTER))
 	{
 		SpawnBall();
 	}
+	
+	if (input.IsKeyDown(Input::KEY_NUM_PLUS))
+	{
+		SpawnBall();
+	}
+
 
 	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
 	{
@@ -224,111 +232,88 @@ void Simulation::Update(const Input& input, double frameTime)
 
 void Simulation::DoSimulation(double timeStep)
 {
-	Peg* collisionPeg = NULL;
-	Plane* collisionPlane = NULL;
-	PlaneSegment* collisionPlaneSegment = NULL;
-	Ball* collisionBall = NULL;
-
 	std::vector<Ball*> ballsToErase;
+
+	struct Collision
+	{
+		Collision (ICanCollideWithBall* collisionTarget, Ball* collisionBall, double time) : 
+			collisionTarget(collisionTarget),
+			collisionBall( collisionBall),
+			time(time)
+			{}
+		ICanCollideWithBall* collisionTarget;
+		Ball* collisionBall;
+		double time;
+	};
+
+	std::vector<Collision> collisions;
+
+	double nextCollision = timeStep;
 
 	do
 	{
-		if (collisionPeg != NULL)
-		{
-			collisionBall->CollisionResponse(*collisionPeg);
-			collisionPeg = NULL;
-		}
-		else if (collisionPlane != NULL)
-		{
-			collisionBall->CollisionResponse(*collisionPlane);
-
-			if (collisionPlane == m_planeVector[0])
-				ballsToErase.push_back(collisionBall);
-
-			collisionPlane = NULL;
-		}
-		else if (collisionPlaneSegment != NULL)
-		{
-			collisionBall->CollisionResponse(*collisionPlaneSegment);
-			collisionPlaneSegment = NULL;
-		}
-
-		double nextCollision = timeStep;
-
 		for (unsigned int b = 0; b < m_ballVector.size(); b++)
 		{
 			m_ballVector[b]->ApplyForce(Vector3f(0, -98.1f*m_ballVector[b]->GetMass(), 0));	// Gravity
 			m_ballVector[b]->ApplyForce(m_ballVector[b]->GetVelocity()*-0.02f);				// Air resistance
 
-			// test for collisions
-			for (unsigned int i = 0; i < m_planeVector.size(); i++)
+			for (unsigned int i = b+1; i < m_ballVector.size(); i++)
 			{
 				double nextCollisionTemp = nextCollision;
 
-				if (m_ballVector[b]->CollisionTest(*m_planeVector[i], nextCollisionTemp))
+				if (m_ballVector[i]->CollisionTest(*m_ballVector[b], nextCollisionTemp))
 				{
 					if (nextCollisionTemp == 0.0f)
 					{
-						m_ballVector[b]->CollisionResponse(*m_planeVector[i]);
-						if (i == 0)
+						m_ballVector[i]->CollisionResponse(*m_ballVector[b]);
+					}
+					else
+					{
+						collisions.push_back(Collision(m_ballVector[i],m_ballVector[b],nextCollisionTemp));
+					}
+				}
+			}
+
+			for (unsigned int i = 0; i < m_obstacles.size(); i++)
+			{
+				double nextCollisionTemp = nextCollision;
+
+				if (m_obstacles[i]->CollisionTest(*m_ballVector[b], nextCollisionTemp))
+				{
+					if (nextCollisionTemp == 0.0f)
+					{
+						m_obstacles[i]->CollisionResponse(*m_ballVector[b]);
+						if (m_obstacles[i] == m_floor)
 							ballsToErase.push_back(m_ballVector[b]);
 					}
 					else
 					{
-						collisionBall = m_ballVector[b];
-						nextCollision = nextCollisionTemp;
-						collisionPlane = m_planeVector[i];
-					}
-				}
-			}
-		
-			for (unsigned int i = 0; i < m_planeSegVector.size(); i++)
-			{
-				double nextCollisionTemp = nextCollision;
-			
-				if (m_ballVector[b]->CollisionTest(*m_planeSegVector[i], nextCollisionTemp))
-				{
-					if (nextCollisionTemp == 0.0f)
-					{
-						m_ballVector[b]->CollisionResponse(*m_planeSegVector[i]);
-					}
-					else
-					{
-						collisionBall = m_ballVector[b];
-						nextCollision = nextCollisionTemp;
-						collisionPlaneSegment = m_planeSegVector[i];
-						collisionPlane = NULL;
-					}
-				}
-			}
-
-			for (unsigned int i = 0; i < m_pegVector.size(); i++)
-			{
-				double nextCollisionTemp = nextCollision;
-				if (m_ballVector[b]->CollisionTest(*m_pegVector[i],  nextCollisionTemp))
-				{
-					if (nextCollisionTemp == 0.0f)
-					{
-						m_ballVector[b]->CollisionResponse(*m_pegVector[i]);
-					}
-					else
-					{
-						collisionBall = m_ballVector[b];
-						nextCollision = nextCollisionTemp;
-						collisionPeg = m_pegVector[i];
-						collisionPlane = NULL;
-						collisionPlaneSegment = NULL;
+						collisions.push_back(Collision(m_obstacles[i],m_ballVector[b],nextCollisionTemp));
 					}
 				}
 			}
 		}
 
+		if (!collisions.empty())
+			nextCollision = collisions[collisions.size()-1].time;
+
 		for (unsigned int b = 0; b < m_ballVector.size(); b++)
 			m_ballVector[b]->Update(nextCollision);
 
+		for (int c = collisions.size() - 1; c > 0; c--)
+		{
+			if (collisions[c].time < nextCollision)
+				break;
+
+			collisions[c].collisionTarget->CollisionResponse(*collisions[c].collisionBall);
+
+			if (collisions[c].collisionTarget == m_floor)
+				ballsToErase.push_back(collisions[c].collisionBall);
+		}
+		collisions.clear();
+		
 		timeStep -= nextCollision;
 
-		
 		for (unsigned int i = 0; i < ballsToErase.size(); i++)
 		{
 			for (unsigned int b = 0; b < m_ballVector.size(); b++)
@@ -336,6 +321,22 @@ void Simulation::DoSimulation(double timeStep)
 				if (ballsToErase[i] == m_ballVector[b])
 				{
 					m_ballVector.erase(std::vector<Ball*>::iterator(&m_ballVector[b], &m_ballVector));
+
+					int dividerPos = 0;
+					for (; dividerPos < 8; dividerPos++)
+					{
+						if (ballsToErase[i]->GetPosition().X() < (-3.5f+(float)dividerPos))
+						{
+							m_ballsCollected[dividerPos]++;
+							break;
+						}
+					}
+					if (dividerPos >= 8)
+					{
+						m_ballsCollected[8]++;
+					}
+
+					delete ballsToErase[i];
 					break;
 				}
 			}
@@ -372,10 +373,23 @@ void Simulation::Draw()
 	icons.Begin();
 	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
 	icons.End();
+	
+	std::stringstream ss;
+	ss << "David Hart (#200879078)\n08241 Simulation and Rendering\n"<<
+		"Dropped: " << m_ballsDropped << "\n" <<
+		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n";
+
+	int totalCollected = m_ballsDropped - m_ballVector.size();
+
+	for (int i = 0; i < 9; i++)
+	{
+		ss << m_ballsCollected[i] << "(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)   ";
+	}
+	
 
 	SpriteBatch s(m_window);
 	s.Begin();
-	m_font.DrawText(s, "David Hart (#200879078)\n08241 Simulation and Rendering", Vector2f(1, 0));
+	m_font.DrawText(s, ss.str(), Vector2f(1, 0));
 	s.End();
 
 	glPopMatrix();
@@ -383,9 +397,16 @@ void Simulation::Draw()
 
 void Simulation::SpawnBall()
 {
-	if (m_ballVector.size() < 25)
+	if (m_ballVector.size() < m_maxBalls)
 	{
-		int random = rand() % 9999;
-		m_ballVector.push_back(new Ball(m_resources, Vector3f((float)(random-4999.5f)/9999.0f*0.75f, 10.0f, 0.126f)));
+		int randomX = rand() % 9999;
+		int randomY = rand() % 9999;
+		int randomZ = rand() % 9999;
+		m_ballVector.push_back(new Ball(m_resources, 
+			Vector3f((float)(randomX-4999.5f)/9999.0f*0.75f, 
+			8.0f+(float)(randomY-4999.5f)/9999.0f*0.75f, 
+			0.126f+(float)(randomZ)/9999.0f*0.75f)));
+
+		m_ballsDropped++;
 	}
 }

@@ -2,28 +2,24 @@
 #define _BALL_H
 
 #include "physicsobject.h"
+#include "icancollidewithball.h"
 
 class ResourceBank;
 class Peg;
 class Plane;
 class PlaneSegment;
 
-class Ball : public PhysicsObject
+class Ball : public PhysicsObject, public ICanCollideWithBall
 {
 protected:
 	float m_radius;
 
 public:
 	Ball(ResourceBank& resources, const Vector3f& position);
+	inline float GetRadius() { return m_radius; }
 
-	bool CollisionTest(const Peg& peg, double& nextCollision);
-	void CollisionResponse(const Peg& peg);
-
-	bool CollisionTest(const Plane& plane, double& nextCollision);
-	void CollisionResponse(const Plane& plane);
-
-	bool CollisionTest(const PlaneSegment& planeSegment, double& nextCollision);
-	void CollisionResponse(const PlaneSegment& planeSegment);
+	bool CollisionTest(Ball& ball, double& nextCollision);
+	void CollisionResponse(Ball& ball);
 };
 
 #endif
