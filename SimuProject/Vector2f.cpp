@@ -29,6 +29,14 @@ Vector2f Vector2f::Add(const Vector2f& pV) const
 {
 	return Vector2f(m_X + pV.m_X, m_Y + pV.m_Y);
 }
+const Vector2f& Vector2f::operator+=(const Vector2f& pV)
+{
+	m_X += pV.m_X;
+	m_Y += pV.m_Y;
+
+	return *this;
+}
+
 
 Vector2f Vector2f::Subtract(const Vector2f& pV) const
 {

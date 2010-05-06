@@ -21,13 +21,16 @@ public:
 	void Unit();
 
 	Vector2f Add(const Vector2f& pV)const;
-	inline Vector2f operator+(const Vector2f& pV)const { return Add(pV); }
+	inline Vector2f operator+(const Vector2f& pV) const { return Add(pV); }
+	const Vector2f& operator+=(const Vector2f& pV);
 
 	Vector2f Subtract(const Vector2f& pV)const;
-	inline Vector2f operator-(const Vector2f& pV)const { return Subtract(pV); }
+	inline Vector2f operator-(const Vector2f& pV) const { return Subtract(pV); }
+	const Vector2f& operator-=(const Vector2f& pV);
 
 	Vector2f Multiply(float pScalar)const;
 	inline Vector2f operator*(float pScalar) const { return Multiply(pScalar); }
+	const Vector2f& operator*=(float pScalar);
 
 	float Dot(const Vector2f& pV)const;
 };

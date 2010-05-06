@@ -35,6 +35,17 @@ public:
 		KEY_A = 0x41,
 		KEY_S = 0x53,
 		KEY_D = 0x44,
+
+		KEY_0 = 0x30,
+		KEY_1 = 0x31,
+		KEY_2 = 0x32,
+		KEY_3 = 0x33,
+		KEY_4 = 0x34,
+		KEY_5 = 0x35,
+		KEY_6 = 0x36,
+		KEY_7 = 0x37,
+		KEY_8 = 0x38,
+		KEY_9 = 0x39,
 	};
 
 	enum eButton

@@ -5,34 +5,33 @@
 #include <Gl/gl.h>
 #include <iostream>
 
-#include "Math.h" // PI
-#include <cmath>
-#include <cstdlib> // rand
-
+#include "Math.h"	// PI
+#include <cmath>	// tan, floor
+#include <cstdlib>	// rand, srand
+#include <ctime>	// time
 #include <sstream>
 
-#include "icondrawer3d.h"
-
-#include "spritebatch.h"
-
 Simulation::Simulation() :
-	m_rotationX( 0.0 ),
-	m_rotationY( 0.0 ),
-	m_camera(Vector3f(0, 3.5f, 18), 0, 0, 0),
-	m_updateFrequency( 1/80.0 ),
+	m_updateFrequency ( 1/80.0 ),
 	m_maxBalls ( 20 ),
-	m_frameTimeAccumulator( 0.0 ),
-	m_font("Tahoma", 12, false, false),
-	m_ballsDropped( 0 )
+	m_frameTimeAccumulator ( 0.0 ),
+	m_font ("Tahoma", 12, false, false),
+	m_ballsDropped ( 0 ),
+	m_cameraMode ( CAMERA_MODE_FIXED ),
+	m_userCamera ( Vector3f(0, 3.5f, 16), 0, 0, 0 ),
+	m_userCamSimRotation ( Vector2f(0, 0) ),
+	m_fixedCamera ( Vector3f(0, 3.5f, 16), 0, 0, 0 ),
+	m_trackingCamera ( Vector3f(0, 3.5f, 6), 0, 0, 0 ),
+	m_trackedBall ( NULL ),
+	m_spriteBatch ( m_window )
 {
-	m_window.SetTitle("Simulation");
+	m_window.SetTitle("08241 Simulation and Rendering ACW - David Hart (#200879078)");
 
-	for (int i = 0; i < 9; i++)
-		m_ballsCollected[i] = 0;
+	for (int i = 0; i < 9; i++) m_ballsCollected[i] = 0;
 
 	m_timeBetweenRenders.Start();
 
-	srand(0);
+	srand((unsigned int)time(NULL));
 }
 
 Simulation::~Simulation()
@@ -66,14 +65,12 @@ void Simulation::OnResize(int width, int height)
 void Simulation::Load()
 {
 	m_font.Load();
+
+	// Get models for machine
 	m_modelMachine = m_resources.RequestModel("Resources/machine2.obj");
-	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
 	m_modelGlass = m_resources.RequestModel("Resources/machineglass.obj");
-	m_resources.RequestModel("lighticon.png");
 
-	m_objectMachine.SetModel(m_modelMachine);
-
-	m_obstacles.reserve(92);
+	m_obstacles.reserve(92); // 92 obstacles will be created
 
 	m_floor = new Plane(Vector3f(0,1,0), Vector3f(0, 0.5f, 0)); // bottom
 	m_obstacles.push_back(m_floor);  
@@ -83,14 +80,14 @@ void Simulation::Load()
 	m_obstacles.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
 	m_obstacles.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
 
-	const float dividerHeight = 2.4f;
-	const float dividerWidth = 1.0f;
-
+	// Shute walls
 	m_obstacles.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(-0.5f, 7.0f, 0), 
 		Vector3f(-0.5f, 6+7.0f, 0), Vector3f(-0.5f, 7.0f, 1)));
 	m_obstacles.push_back(new PlaneSegment(Vector3f(-1,0,0), Vector3f(0.5f, 7.0f, 0), 
 		Vector3f(0.5f, 6+7.0f, 0), Vector3f(0.5f, 7.0f, 1)));
 
+	// Bucket dividers
+	const float dividerHeight = 2.4f, dividerWidth = 1.0f;
 	for (float dividerPos = -3.5f; dividerPos <= 3.5f; dividerPos += 1.0f)
 	{
 		m_obstacles.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(dividerPos+0.05f, 0, 0), 
@@ -99,6 +96,7 @@ void Simulation::Load()
 			Vector3f(dividerPos-0.05f, dividerHeight, 0), Vector3f(dividerPos-0.05f, 0, dividerWidth)));
 	}
 
+	// Pegs
 	for (int i = 0; i < 4; i++)
 	{
 		Vector3f pegPosition(-3.5f, 2.5f + (float)i, 0.0f);
@@ -124,9 +122,6 @@ void Simulation::Load()
 			pegPosition += Vector3f(1.0f, 0.0f, 0.0f);
 		}
 	}
-
-	SpawnBall();
-
 
 	m_resources.Load();
 
@@ -156,23 +151,13 @@ void Simulation::Load()
 void Simulation::Unload()
 {
 	m_font.Unload();
-
 }
 
 void Simulation::Update(const Input& input, double frameTime)
 {
 	float frameTimeFloat = (float)frameTime;
 
-	Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
-
-	m_frameTimeAccumulator += frameTime;
-
-	while(m_frameTimeAccumulator >= m_updateFrequency)
-	{
-		DoSimulation(m_updateFrequency);
-		m_frameTimeAccumulator -= m_updateFrequency;
-	}
-
+	// Handle input
 	if (input.IsKeyJustPressed(Input::KEY_ENTER))
 	{
 		SpawnBall();
@@ -183,42 +168,54 @@ void Simulation::Update(const Input& input, double frameTime)
 		SpawnBall();
 	}
 
+	if (input.IsKeyJustPressed(Input::KEY_1))
+		m_cameraMode = CAMERA_MODE_FIXED;
 
-	if (input.IsButtonDown(Input::MBUTTON_RIGHT))
+	if (input.IsKeyJustPressed(Input::KEY_2))
+		m_cameraMode = CAMERA_MODE_USER;
+
+	if (input.IsKeyJustPressed(Input::KEY_3))
+		m_cameraMode = CAMERA_MODE_BALL;
+
+	if (m_cameraMode == CAMERA_MODE_USER)
 	{
-		if (mouseMoveDist.X() != 0.0f) m_camera.RotateYaw(mouseMoveDist.X()/300.0f);
-		if (mouseMoveDist.Y() != 0.0f) m_camera.RotatePitch(mouseMoveDist.Y()/300.0f);
+		Vector2f mouseMoveDist = input.GetDistanceMouseMoved();
+
+		if (input.IsButtonDown(Input::MBUTTON_RIGHT))
+		{
+			if (mouseMoveDist.X() != 0.0f) m_userCamera.RotateYaw(mouseMoveDist.X()/300.0f);
+			if (mouseMoveDist.Y() != 0.0f) m_userCamera.RotatePitch(mouseMoveDist.Y()/300.0f);
+		}
+
+		if (input.IsButtonDown(Input::MBUTTON_LEFT))
+		{
+			m_userCamSimRotation += Vector2f(mouseMoveDist.X()/300.0f, mouseMoveDist.Y()/300.0f);
+		}
+
+		if (input.IsKeyDown(Input::KEY_W))
+			m_userCamera.MoveForward(-frameTimeFloat*15.0f);
+
+		if (input.IsKeyDown(Input::KEY_S))
+			m_userCamera.MoveForward(frameTimeFloat*15.0f);
+		
+		if (input.IsKeyDown(Input::KEY_A))
+			m_userCamera.MoveStrafe(-frameTimeFloat*15.0f);
+
+		if (input.IsKeyDown(Input::KEY_D))
+			m_userCamera.MoveStrafe(frameTimeFloat*15.0f);
+
+		if (input.IsKeyDown(Input::KEY_RIGHT))
+			m_userCamera.RotateYaw(frameTimeFloat);
+
+		if (input.IsKeyDown(Input::KEY_LEFT))
+			m_userCamera.RotateYaw(-frameTimeFloat);
+
+		if (input.IsKeyDown(Input::KEY_UP))
+			m_userCamera.RotatePitch(-frameTimeFloat);
+
+		if (input.IsKeyDown(Input::KEY_DOWN))
+			m_userCamera.RotatePitch(frameTimeFloat);
 	}
-
-	if (input.IsButtonDown(Input::MBUTTON_LEFT))
-	{
-		m_rotationX += mouseMoveDist.X()/300.0f;
-		m_rotationY += mouseMoveDist.Y()/300.0f;
-	}
-
-	if (input.IsKeyDown(Input::KEY_A))
-		m_camera.MoveStrafe(-frameTimeFloat*15.0f);
-
-	if (input.IsKeyDown(Input::KEY_D))
-		m_camera.MoveStrafe(frameTimeFloat*15.0f);
-
-	if (input.IsKeyDown(Input::KEY_W))
-		m_camera.MoveForward(-frameTimeFloat*15.0f);
-
-	if (input.IsKeyDown(Input::KEY_S))
-		m_camera.MoveForward(frameTimeFloat*15.0f);
-
-	if (input.IsKeyDown(Input::KEY_RIGHT))
-		m_camera.RotateYaw(frameTimeFloat);
-
-	if (input.IsKeyDown(Input::KEY_LEFT))
-		m_camera.RotateYaw(-frameTimeFloat);
-
-	if (input.IsKeyDown(Input::KEY_UP))
-		m_camera.RotatePitch(-frameTimeFloat);
-
-	if (input.IsKeyDown(Input::KEY_DOWN))
-		m_camera.RotatePitch(frameTimeFloat);
 
 	if (input.IsKeyJustPressed(Input::KEY_F1))
 		Lighting::Disable();
@@ -231,12 +228,24 @@ void Simulation::Update(const Input& input, double frameTime)
 	
 	if (input.IsKeyJustPressed(Input::KEY_F4))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// Update simulation
+	m_frameTimeAccumulator += frameTime;
+
+	while(m_frameTimeAccumulator >= m_updateFrequency)
+	{
+		DoSimulation(m_updateFrequency);
+		m_frameTimeAccumulator -= m_updateFrequency;
+	}
 }
 
 void Simulation::DoSimulation(double timeStep)
 {
+	// Balls that must be erased at the end of the timestep, as they have
+	// collided with the floor plane
 	std::vector<Ball*> ballsToErase;
 
+	// Struct to hold details about collisions
 	struct Collision
 	{
 		Collision (ICanCollideWithBall* collisionTarget, Ball* collisionBall, double time) : 
@@ -249,23 +258,28 @@ void Simulation::DoSimulation(double timeStep)
 		double time;
 	};
 
+	// Vector of collisions that happen in the next timeslice
 	std::vector<Collision> collisions;
-
-	double nextCollision = timeStep;
 
 	do
 	{
+		double nextCollision = timeStep;
+
+		// Check for collisions happening to each ball in the current timeslice
 		for (unsigned int b = 0; b < m_ballVector.size(); b++)
 		{
 			m_ballVector[b]->ApplyForce(Vector3f(0, -98.1f*m_ballVector[b]->GetMass(), 0));	// Gravity
 			m_ballVector[b]->ApplyForce(m_ballVector[b]->GetVelocity()*-0.02f);				// Air resistance
 
+			// Check for collisions with other balls
 			for (unsigned int i = b+1; i < m_ballVector.size(); i++)
 			{
 				double nextCollisionTemp = nextCollision;
 
 				if (m_ballVector[i]->CollisionTest(*m_ballVector[b], nextCollisionTemp))
 				{
+					// Apply collision response to any collisions happening now, 
+					// otherwise record the time the collision happens
 					if (nextCollisionTemp == 0.0f)
 					{
 						m_ballVector[i]->CollisionResponse(*m_ballVector[b]);
@@ -277,12 +291,15 @@ void Simulation::DoSimulation(double timeStep)
 				}
 			}
 
+			// Check for collisions with obstacles
 			for (unsigned int i = 0; i < m_obstacles.size(); i++)
 			{
 				double nextCollisionTemp = nextCollision;
 
 				if (m_obstacles[i]->CollisionTest(*m_ballVector[b], nextCollisionTemp))
 				{
+					// Apply collision response to any collisions happening now,
+					// otherwise record the time the collision happens
 					if (nextCollisionTemp == 0.0f)
 					{
 						m_obstacles[i]->CollisionResponse(*m_ballVector[b]);
@@ -297,12 +314,15 @@ void Simulation::DoSimulation(double timeStep)
 			}
 		}
 
+		// if there are collisions, update all objects to the earliest collision
 		if (!collisions.empty())
 			nextCollision = collisions[collisions.size()-1].time;
 
 		for (unsigned int b = 0; b < m_ballVector.size(); b++)
 			m_ballVector[b]->Update(nextCollision);
 
+		// for each simultaneous collsion happening at the current instant of time
+		// reslove it
 		for (int c = collisions.size() - 1; c > 0; c--)
 		{
 			if (collisions[c].time < nextCollision)
@@ -310,12 +330,13 @@ void Simulation::DoSimulation(double timeStep)
 
 			collisions[c].collisionTarget->CollisionResponse(*collisions[c].collisionBall);
 
+			// if the collision is with the floor, add the ball to be deleted
 			if (collisions[c].collisionTarget == m_floor)
 				ballsToErase.push_back(collisions[c].collisionBall);
 		}
+		// discard all collisions, including ones that have not had response applied, as
+		// they need to be re-checked
 		collisions.clear();
-		
-		timeStep -= nextCollision;
 
 		for (unsigned int i = 0; i < ballsToErase.size(); i++)
 		{
@@ -339,12 +360,18 @@ void Simulation::DoSimulation(double timeStep)
 						m_ballsCollected[8]++;
 					}
 
+					if (m_trackedBall == ballsToErase[i])
+						m_trackedBall = NULL;
+
 					delete ballsToErase[i];
 					break;
 				}
 			}
 		}
 		ballsToErase.clear();
+
+		// we have updated to the next collision, so shrink the timestep
+		timeStep -= nextCollision;
 
 	} while (timeStep > 0);
 }
@@ -355,16 +382,30 @@ void Simulation::Draw()
 	m_timeBetweenRenders.Start();
 	glPushMatrix();
 
-	m_camera.SetViewMatrix();
+	if (m_cameraMode == CAMERA_MODE_USER)
+		m_userCamera.SetViewMatrix();
+	else if (m_cameraMode == CAMERA_MODE_FIXED)
+		m_fixedCamera.SetViewMatrix();
+	else
+	{
+		if (m_trackedBall != NULL)
+			m_trackingCamera.Position(Vector3f(m_trackedBall->GetPosition().X(), 
+				m_trackedBall->GetPosition().Y(), m_trackingCamera.Position().Z()));
+
+		m_trackingCamera.SetViewMatrix();
+	}
 
 	m_light0.Apply(0);
 
 	glPushMatrix();
-	glRotated(m_rotationX*180/MATH_PI, 0, 1, 0);
-	glRotated(m_rotationY*180/MATH_PI, 1, 0, 0);
 
+	if (m_cameraMode == CAMERA_MODE_USER)
+	{
+		glRotated(m_userCamSimRotation.X()*180/MATH_PI, 0, 1, 0);
+		glRotated(m_userCamSimRotation.Y()*180/MATH_PI, 1, 0, 0);
+	}
 	
-	m_objectMachine.Draw();
+	m_modelMachine->Draw();
 
 	for (unsigned int i = 0; i < m_pegVector.size(); i++)
 		m_pegVector[i]->Draw();
@@ -372,7 +413,101 @@ void Simulation::Draw()
 	for (unsigned int i = 0; i < m_ballVector.size(); i++)
 		m_ballVector[i]->Draw();
 
+	DrawGraph3D();
+
+	m_modelGlass->Draw();
+
+
+	glPopMatrix();	
+
+	std::stringstream ss;
+	ss.setf(std::ios_base::floatfield, std::ios_base::fixed);
+	ss.precision(2);
+	ss << "David Hart (#200879078)\n08241 Simulation and Rendering";
+
+	m_spriteBatch.Begin();
+
+	int windoww, windowh;
+	m_window.GetSize(windoww, windowh);
+
+	m_font.DrawText(m_spriteBatch, ss.str(), Vector2f(1, 0));
+
+	ss.str(std::string());
+	ss << "fps: " << 1/m_timeBetweenRenders.GetTime() << "\n" <<
+		"Dropped: " << m_ballsDropped << "\n" <<
+		"Active: " << m_ballVector.size() << "/" << m_maxBalls;
+	
+	m_font.DrawText(m_spriteBatch, ss.str(), Vector2f((float)windoww-3,0), Font::ALIGNMENT_RIGHT); 
+
+	ss.str(std::string());
+	if (m_cameraMode == CAMERA_MODE_FIXED)
+		ss << "FIXED CAMERA";
+	else if (m_cameraMode == CAMERA_MODE_BALL)
+		ss << "BALL-TRACKING CAMERA";
+	else 
+		ss << "USER CAMERA";
+
+	m_font.DrawText(m_spriteBatch, ss.str(), Vector2f(floor((float)windoww/2), 0), Font::ALIGNMENT_CENTER);
+
+	DrawGraph2D();
+
+	m_spriteBatch.End();
+
+	glPopMatrix();
+}
+
+void Simulation::DrawGraph2D()
+{
 	int totalCollected = m_ballsDropped - m_ballVector.size();
+
+	if (totalCollected > 0)
+	{
+		std::stringstream ss;
+		for (int i = 0; i < 9; i++)
+		{
+			ss << m_ballsCollected[i] << "(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)   ";
+		}
+
+		glDisable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+
+		int windoww, windowh;
+		m_window.GetSize(windoww, windowh);
+
+		float graphLineWidth = (float)windoww/9;
+		float graphLineMaxHeight = (float)windowh/5;
+
+		glColor4f(0.85f, 0.227f, 0.227f, 0.5f);
+
+		for (int i = 0; i < 9; i++)
+		{
+			float height = (float)m_ballsCollected[i]/totalCollected * graphLineMaxHeight;
+			glVertex2f(i*graphLineWidth, (float)windowh-height);
+			glVertex2f(i*graphLineWidth, (float)windowh);
+			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh);
+			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh-height);
+		}
+
+		glEnd();
+		glEnable(GL_TEXTURE_2D);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < 9; i++)
+		{
+			ss.str(std::string());
+			ss << m_ballsCollected[i] << "\n(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)";
+			Vector2f size = m_font.MeasureString(ss.str());
+			m_font.DrawText(m_spriteBatch, ss.str(), Vector2f(floor(i*graphLineWidth+graphLineWidth/2), 
+				floor(windowh-size.Y()-3)), Font::ALIGNMENT_CENTER);
+		}
+	}
+}
+
+void Simulation::DrawGraph3D()
+{
+	int totalCollected = m_ballsDropped - m_ballVector.size();
+
 	if (totalCollected > 0)
 	{
 		glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT);
@@ -406,80 +541,6 @@ void Simulation::Draw()
 
 		glPopAttrib();
 	}
-
-	m_modelGlass->Draw();
-
-
-	glPopMatrix();	
-
-	IconDrawer3D icons(m_camera);
-	icons.Begin();
-	icons.Draw(m_light0, m_resources.RequestTexture("lighticon.png"));
-	icons.End();
-	
-	std::stringstream ss;
-	ss.setf(std::ios_base::floatfield, std::ios_base::fixed);
-	ss.precision(2);
-	ss << "David Hart (#200879078)\n08241 Simulation and Rendering";
-
-	SpriteBatch s(m_window);
-	s.Begin();
-
-	int windoww, windowh;
-	m_window.GetSize(windoww, windowh);
-
-	m_font.DrawText(s, ss.str(), Vector2f(1, 0));
-
-	ss.str(std::string());
-	ss << "fps: " << 1/m_timeBetweenRenders.GetTime() << "\n" <<
-		"Dropped: " << m_ballsDropped << "\n" <<
-		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n";
-
-	m_font.DrawText(s, ss.str(), Vector2f((float)windoww-3,0), Font::ALIGNMENT_RIGHT); 
-
-	if (totalCollected > 0)
-	{
-		for (int i = 0; i < 9; i++)
-		{
-			ss << m_ballsCollected[i] << "(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)   ";
-		}
-
-		glDisable(GL_TEXTURE_2D);
-		glBegin(GL_QUADS);
-
-		float graphLineWidth = (float)windoww/9;
-		float graphLineMaxHeight = (float)windowh/5;
-		glColor4f(0.85f, 0.227f, 0.227f, 0.5f);
-		for (int i = 0; i < 9; i++)
-		{
-
-			float height = (float)m_ballsCollected[i]/totalCollected * graphLineMaxHeight;
-			glVertex2f(i*graphLineWidth, (float)windowh-height);
-			glVertex2f(i*graphLineWidth, (float)windowh);
-			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh);
-			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh-height);
-		}
-
-		glEnd();
-		glEnable(GL_TEXTURE_2D);
-
-		glColor3f(1.0f, 1.0f, 1.0f);
-
-		for (int i = 0; i < 9; i++)
-		{
-			ss.str(std::string());
-			ss << m_ballsCollected[i] << "\n(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)";
-			Vector2f size = m_font.MeasureString(ss.str());
-			m_font.DrawText(s, ss.str(), Vector2f(floor(i*graphLineWidth+graphLineWidth/2), 
-				floor(windowh-size.Y()-3)), Font::ALIGNMENT_CENTER);
-		}
-
-	}
-	
-	//m_font.DrawText(s, ss.str(), Vector2f(1, 0));
-	s.End();
-
-	glPopMatrix();
 }
 
 void Simulation::SpawnBall()
@@ -489,10 +550,12 @@ void Simulation::SpawnBall()
 		int randomX = rand() % 9999;
 		int randomY = rand() % 9999;
 		int randomZ = rand() % 9999;
-		m_ballVector.push_back(new Ball(m_resources, 
+		Ball * b = new Ball(m_resources, 
 			Vector3f((float)(randomX-4999.5f)/9999.0f*0.75f, 
 			8.0f+(float)(randomY-4999.5f)/9999.0f*0.75f, 
-			0.126f+(float)(randomZ)/9999.0f*0.75f)));
+			0.126f+(float)(randomZ)/9999.0f*0.75f));
+		m_ballVector.push_back(b);
+		m_trackedBall = b;
 
 		m_ballsDropped++;
 	}
