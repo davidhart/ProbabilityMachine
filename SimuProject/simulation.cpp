@@ -338,14 +338,18 @@ void Simulation::DoSimulation(double timeStep)
 		// they need to be re-checked
 		collisions.clear();
 
+		// delete all the balls that need to be deleted
 		for (unsigned int i = 0; i < ballsToErase.size(); i++)
 		{
+			// loop through ball vector to find it
 			for (unsigned int b = 0; b < m_ballVector.size(); b++)
 			{
 				if (ballsToErase[i] == m_ballVector[b])
 				{
+					// when we've found it, remove from ball vector
 					m_ballVector.erase(std::vector<Ball*>::iterator(&m_ballVector[b], &m_ballVector));
 
+					// work out what divider it's in so we can increase that stat
 					int dividerPos = 0;
 					for (; dividerPos < 8; dividerPos++)
 					{
@@ -360,6 +364,7 @@ void Simulation::DoSimulation(double timeStep)
 						m_ballsCollected[8]++;
 					}
 
+					// if the deleted ball is being tracked by the camera, stop tracking it
 					if (m_trackedBall == ballsToErase[i])
 						m_trackedBall = NULL;
 
