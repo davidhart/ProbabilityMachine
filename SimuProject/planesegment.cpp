@@ -42,36 +42,6 @@ bool PlaneSegment::CollisionTest(Ball& ball, double& nextCollision)
 	}
 
 	return false;
-
-	/*
-	Vector3f p = CalcTenativePosition(nextCollision);
-
-	if ( planeSegment.GetNormal().Dot(m_position - planeSegment.GetOrigin()) > -m_radius+0.001f )
-	{
-		if ( planeSegment.GetNormal().Dot(p - planeSegment.GetOrigin()) <= m_radius)
-		{
-			double bottomTime = 0;
-			double topTime = nextCollision;
-			double midTime = bottomTime + (topTime-bottomTime)/2;
-
-			for (int i = 0; i < 5; i++)
-			{
-				p = CalcTenativePosition(midTime);
-
-				if (planeSegment.GetNormal().Dot(p - planeSegment.GetOrigin()) <= m_radius)
-				{
-					topTime = midTime;
-				}
-				else
-				{
-					bottomTime = midTime;
-				}
-			}
-
-
-
-		}
-	}*/
 }
 
 void PlaneSegment::CollisionResponse(Ball& ball)
