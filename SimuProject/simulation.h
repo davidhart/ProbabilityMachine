@@ -58,6 +58,8 @@ private:
 	int m_ballsDropped;
 	int m_ballsCollected[9];
 
+	float m_simSpeed;
+
 	const double m_updateFrequency;
 	const unsigned int m_maxBalls;
 	double m_frameTimeAccumulator;

@@ -23,7 +23,8 @@ Simulation::Simulation() :
 	m_fixedCamera ( Vector3f(0, 3.5f, 16), 0, 0, 0 ),
 	m_trackingCamera ( Vector3f(0, 3.5f, 6), 0, 0, 0 ),
 	m_trackedBall ( NULL ),
-	m_spriteBatch ( m_window )
+	m_spriteBatch ( m_window ),
+	m_simSpeed ( 1.0f )
 {
 	m_window.SetTitle("08241 Simulation and Rendering ACW - David Hart (#200879078)");
 
@@ -125,6 +126,8 @@ void Simulation::Load()
 
 	m_resources.Load();
 
+	glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
+
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER,0.0f);
     glEnable(GL_BLEND);
@@ -176,6 +179,19 @@ void Simulation::Update(const Input& input, double frameTime)
 
 	if (input.IsKeyJustPressed(Input::KEY_3))
 		m_cameraMode = CAMERA_MODE_BALL;
+
+	if (input.IsKeyJustPressed(Input::KEY_4))
+	{
+		m_simSpeed -= 0.1f;
+		if (m_simSpeed < 0.1f)
+			m_simSpeed = 0.1f;
+	}
+	if (input.IsKeyJustPressed(Input::KEY_5))
+	{
+		m_simSpeed += 0.1f;
+		if (m_simSpeed > 1.0f)
+			m_simSpeed = 1.0f;
+	}
 
 	if (m_cameraMode == CAMERA_MODE_USER)
 	{
@@ -230,12 +246,12 @@ void Simulation::Update(const Input& input, double frameTime)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Update simulation
-	m_frameTimeAccumulator += frameTime;
+	m_frameTimeAccumulator += frameTime*m_simSpeed;
 
-	while(m_frameTimeAccumulator >= m_updateFrequency)
+	while(m_frameTimeAccumulator >= m_updateFrequency*m_simSpeed)
 	{
-		DoSimulation(m_updateFrequency);
-		m_frameTimeAccumulator -= m_updateFrequency;
+		DoSimulation(m_updateFrequency*m_simSpeed);
+		m_frameTimeAccumulator -= m_updateFrequency*m_simSpeed;
 	}
 }
 
@@ -440,7 +456,8 @@ void Simulation::Draw()
 	ss.str(std::string());
 	ss << "fps: " << 1/m_timeBetweenRenders.GetTime() << "\n" <<
 		"Dropped: " << m_ballsDropped << "\n" <<
-		"Active: " << m_ballVector.size() << "/" << m_maxBalls;
+		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n" <<
+		"Sim Speed: " << m_simSpeed << "x";
 	
 	m_font.DrawText(m_spriteBatch, ss.str(), Vector2f((float)windoww-3,0), Font::ALIGNMENT_RIGHT); 
 
