@@ -39,8 +39,9 @@ SpriteBatch::~SpriteBatch()
 
 void SpriteBatch::Begin( )
 {
-	glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT);
+	glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT);
 	glDisable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
