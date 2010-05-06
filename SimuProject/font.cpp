@@ -160,13 +160,34 @@ void Font::Unload()
 	}
 }
 
-void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position)
+void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position, eAlignment alignment)
 {
 	Vector2f currentPosition = position;
+
+	unsigned int endOfLine = 0;
 
 	for(unsigned int i = 0; i < text.size(); i++)
 	{
 		unsigned char letter = text[i];
+
+		if ((alignment == ALIGNMENT_CENTER || alignment == ALIGNMENT_RIGHT) && i >= endOfLine)
+		{
+			unsigned int l = i;
+			for (; l < text.size(); l++)
+			{
+				if (text[l] == '\n')
+					break;
+			}
+			endOfLine = l;
+
+			std::string line(&text[i], &text[l]);
+
+			Vector2f linesize = MeasureString(line);
+			if (alignment == ALIGNMENT_CENTER)
+				currentPosition.SetX(position.X()-floor(linesize.X()/2));
+			else
+				currentPosition.SetX(position.X()-linesize.X());
+		}
 
 		if (letter == '\n')
 		{
@@ -186,4 +207,37 @@ void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vec
 			currentPosition.SetX(currentPosition.X() + g->m_size.X());
 		}
 	}
+}
+
+Vector2f Font::MeasureString(const std::string& text)
+{
+	Vector2f currentPosition(0, 0);
+	Vector2f size(0,m_height);
+	for(unsigned int i = 0; i < text.size(); i++)
+	{
+		unsigned char letter = text[i];
+		if (letter == '\n')
+		{
+			currentPosition.SetX(0);
+			currentPosition.SetY(currentPosition.Y() + m_height);
+			size.SetY(size.Y()+m_height);
+		}
+		else if (letter == ' ')
+		{
+			currentPosition.SetX(currentPosition.X() + m_spaceWidth);
+		}
+		else if (letter >= m_startChar && letter <= m_endChar)
+		{
+			Glyph* g = m_glyphTable[letter-m_startChar];
+
+			currentPosition.SetX(currentPosition.X() + g->m_size.X());
+		}
+
+		if (currentPosition.X() > size.X())
+			size.SetX(currentPosition.X());
+	}
+
+	//size.SetY(size.X()+m_height);
+
+	return size;
 }

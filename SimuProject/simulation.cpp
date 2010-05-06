@@ -18,7 +18,7 @@
 Simulation::Simulation() :
 	m_rotationX( 0.0 ),
 	m_rotationY( 0.0 ),
-	m_camera(Vector3f(0, 2, 20), 0, 0, 0),
+	m_camera(Vector3f(0, 3.5f, 18), 0, 0, 0),
 	m_updateFrequency( 1/80.0 ),
 	m_maxBalls ( 20 ),
 	m_frameTimeAccumulator( 0.0 ),
@@ -29,6 +29,8 @@ Simulation::Simulation() :
 
 	for (int i = 0; i < 9; i++)
 		m_ballsCollected[i] = 0;
+
+	m_timeBetweenRenders.Start();
 
 	srand(0);
 }
@@ -80,7 +82,7 @@ void Simulation::Load()
 	m_obstacles.push_back(new Plane(Vector3f(0,0,1), Vector3f(0,0,0))); // back
 	m_obstacles.push_back(new Plane(Vector3f(0,0,-1), Vector3f(0,0,1))); // front
 
-	const float dividerHeight = 2.18f;
+	const float dividerHeight = 2.4f;
 	const float dividerWidth = 1.0f;
 
 	m_obstacles.push_back(new PlaneSegment(Vector3f(1,0,0), Vector3f(-0.5f, 7.0f, 0), 
@@ -348,6 +350,8 @@ void Simulation::DoSimulation(double timeStep)
 
 void Simulation::Draw()
 {
+	m_timeBetweenRenders.Stop();
+	m_timeBetweenRenders.Start();
 	glPushMatrix();
 
 	m_camera.SetViewMatrix();
@@ -367,6 +371,41 @@ void Simulation::Draw()
 	for (unsigned int i = 0; i < m_ballVector.size(); i++)
 		m_ballVector[i]->Draw();
 
+	int totalCollected = m_ballsDropped - m_ballVector.size();
+	if (totalCollected > 0)
+	{
+		glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BITS);
+		Lighting::Disable();
+		glBegin(GL_QUADS);
+		glColor4f(0.85f, 0.227f, 0.227f, 0.5f);
+		for (int i = 0; i < 9; i++)
+		{
+			float height = (float)m_ballsCollected[i]/totalCollected * 2.0f;
+			glVertex3f(i*1.0f-4.45f, height+0.5f, 1.125f);
+			glVertex3f(i*1.0f-4.45f, 0.5f, 1.125f);
+			glVertex3f(i*1.0f-3.55f, 0.5f, 1.125f);
+			glVertex3f(i*1.0f-3.55f, height+0.5f, 1.125f);
+		}
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		for (int i = 0; i < 9; i++)
+		{
+			float height = (float)m_ballsCollected[i]/totalCollected * 2.0f;
+			glBegin(GL_LINE_LOOP);
+			glVertex3f(i*1.0f-4.44f, height+0.5f, 1.12501f);
+			glVertex3f(i*1.0f-4.44f, 0.5f, 1.12501f);
+			glVertex3f(i*1.0f-3.55f, 0.5f, 1.12501f);
+			glVertex3f(i*1.0f-3.55f, height+0.5f, 1.12501f);
+			glEnd();
+		}
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		glPopAttrib();
+	}
+
+
 	glPopMatrix();	
 
 	IconDrawer3D icons(m_camera);
@@ -375,21 +414,65 @@ void Simulation::Draw()
 	icons.End();
 	
 	std::stringstream ss;
-	ss << "David Hart (#200879078)\n08241 Simulation and Rendering\n"<<
-		"Dropped: " << m_ballsDropped << "\n" <<
-		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n";
-
-	int totalCollected = m_ballsDropped - m_ballVector.size();
-
-	for (int i = 0; i < 9; i++)
-	{
-		ss << m_ballsCollected[i] << "(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)   ";
-	}
-	
+	ss.setf(std::ios_base::floatfield, std::ios_base::fixed);
+	ss.precision(2);
+	ss << "David Hart (#200879078)\n08241 Simulation and Rendering";
 
 	SpriteBatch s(m_window);
 	s.Begin();
+
+	int windoww, windowh;
+	m_window.GetSize(windoww, windowh);
+
 	m_font.DrawText(s, ss.str(), Vector2f(1, 0));
+
+	ss.str(std::string());
+	ss << "fps: " << 1/m_timeBetweenRenders.GetTime() << "\n" <<
+		"Dropped: " << m_ballsDropped << "\n" <<
+		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n";
+
+	m_font.DrawText(s, ss.str(), Vector2f(windoww-3,0), Font::ALIGNMENT_RIGHT); 
+
+	if (totalCollected > 0)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			ss << m_ballsCollected[i] << "(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)   ";
+		}
+
+		glDisable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
+
+		float graphLineWidth = (float)windoww/9;
+		float graphLineMaxHeight = (float)windowh/5;
+		glColor4f(0.85f, 0.227f, 0.227f, 0.5f);
+		for (int i = 0; i < 9; i++)
+		{
+
+			float height = (float)m_ballsCollected[i]/totalCollected * graphLineMaxHeight;
+			glVertex2f(i*graphLineWidth, (float)windowh-height);
+			glVertex2f(i*graphLineWidth, (float)windowh);
+			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh);
+			glVertex2f(i*graphLineWidth+graphLineWidth, (float)windowh-height);
+		}
+
+		glEnd();
+		glEnable(GL_TEXTURE_2D);
+
+		glColor3f(1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < 9; i++)
+		{
+			ss.str(std::string());
+			ss << m_ballsCollected[i] << "\n(" << (int)((float)m_ballsCollected[i]/totalCollected*100.0f) << "%)";
+			Vector2f size = m_font.MeasureString(ss.str());
+			m_font.DrawText(s, ss.str(), Vector2f(floor(i*graphLineWidth+graphLineWidth/2), 
+				floor(windowh-size.Y()-3)), Font::ALIGNMENT_CENTER);
+		}
+
+	}
+	
+	//m_font.DrawText(s, ss.str(), Vector2f(1, 0));
 	s.End();
 
 	glPopMatrix();

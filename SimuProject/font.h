@@ -34,11 +34,19 @@ private:
 	std::vector<Glyph*> m_glyphTable;
 
 public:
+	enum eAlignment
+	{
+		ALIGNMENT_LEFT,
+		ALIGNMENT_CENTER,
+		ALIGNMENT_RIGHT,
+	};
+
 	Font(const std::string& family, unsigned int height, bool bold, bool italic);
 	~Font();
 	void Load();
 	void Unload();
-	void DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position);
+	void DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vector2f& position, eAlignment alignment = ALIGNMENT_LEFT);
+	Vector2f MeasureString(const std::string& text);
 };
 
 #endif

@@ -30,9 +30,9 @@ bool PlaneSegment::CollisionTest(Ball& ball, double& nextCollision)
 		backN.Unit();
 
 		if ((bottomN.Dot(p-this->GetOrigin()-bottomN*ball.GetRadius()) >= -0.001f)		/*p above origin */
-			&& (topN.Dot(p-(this->GetTopPoint()-topN*ball.GetRadius())) >= -0.001f)		/* p below top */
-			&& (frontN.Dot(p-this->GetOrigin()-frontN*ball.GetRadius()) > -0.001f)		/* p behind front */
-			&& (backN.Dot(p-this->GetFarPoint()-backN*ball.GetRadius()) > -0.001f)	/* p infront of back */)
+			&& (topN.Dot(p-this->GetTopPoint()-topN*ball.GetRadius()) >= -0.001f)		/* p below top */
+			&& (frontN.Dot(p-this->GetOrigin()-frontN*ball.GetRadius()) >= -0.001f)		/* p behind front */
+			&& (backN.Dot(p-this->GetFarPoint()-backN*ball.GetRadius()) >= -0.001f)	/* p infront of back */)
 		{
 			nextCollision = nextCollisionTemp;
 			return true;

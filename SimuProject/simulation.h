@@ -17,6 +17,7 @@
 #include "icancollidewithball.h"
 
 #include "font.h"
+#include "timer.h"
 
 class Simulation : public Game
 {
@@ -32,6 +33,7 @@ private:
 	Camera m_camera;
 	PointLight m_light0;
 	Font m_font;
+	Timer m_timeBetweenRenders;
 
 	int m_ballsDropped;
 	int m_ballsCollected[9];
