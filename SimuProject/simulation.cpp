@@ -183,8 +183,8 @@ void Simulation::Update(const Input& input, double frameTime)
 	if (input.IsKeyJustPressed(Input::KEY_4))
 	{
 		m_simSpeed -= 0.1f;
-		if (m_simSpeed < 0.1f)
-			m_simSpeed = 0.1f;
+		if (m_simSpeed < 0.0f)
+			m_simSpeed = 0.0f;
 	}
 	if (input.IsKeyJustPressed(Input::KEY_5))
 	{
@@ -246,12 +246,15 @@ void Simulation::Update(const Input& input, double frameTime)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Update simulation
-	m_frameTimeAccumulator += frameTime*m_simSpeed;
-
-	while(m_frameTimeAccumulator >= m_updateFrequency*m_simSpeed)
+	if (m_simSpeed > 0)
 	{
-		DoSimulation(m_updateFrequency*m_simSpeed);
-		m_frameTimeAccumulator -= m_updateFrequency*m_simSpeed;
+		m_frameTimeAccumulator += frameTime*m_simSpeed;
+
+		while(m_frameTimeAccumulator >= m_updateFrequency*m_simSpeed)
+		{
+			DoSimulation(m_updateFrequency*m_simSpeed);
+			m_frameTimeAccumulator -= m_updateFrequency*m_simSpeed;
+		}
 	}
 }
 
