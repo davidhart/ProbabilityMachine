@@ -49,7 +49,7 @@ void Material::Apply()
 	temp[0] = m_ambient.X();
 	temp[1] = m_ambient.Y();
 	temp[2] = m_ambient.Z();
-	temp[3] = 1.0f;
+	temp[3] = m_alpha;
 	glMaterialfv(GL_FRONT, GL_AMBIENT, temp);
 
 	temp[0] = m_diffuse.X();
@@ -73,6 +73,7 @@ void Material::Apply()
 		temp[0] = m_specular.X();
 		temp[1] = m_specular.Y();
 		temp[2] = m_specular.Z();
+		temp[3] = 1.0f;
 		glMaterialfv(GL_FRONT, GL_SPECULAR, temp);
 	}
 }

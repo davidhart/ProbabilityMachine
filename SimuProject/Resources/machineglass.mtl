@@ -1,0 +1,12 @@
+# Blender3D MTL File: machineglass.blend
+# Material Count: 1
+newmtl Material
+Ns 96.078431
+Ka 0.200000 0.200000 0.200000
+Kd 0.671877 0.685845 0.696806
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 0.263276
+illum 2
+
+

@@ -25,6 +25,7 @@ private:
 	double m_rotationX,m_rotationY;
 	Model* m_modelMachine;
 	Model* m_modelPeg;
+	Model* m_modelGlass;
 	Object m_objectMachine;
 	std::vector<Peg*> m_pegVector;
 	std::vector<ICanCollideWithBall*> m_obstacles;

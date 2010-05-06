@@ -68,6 +68,7 @@ void Simulation::Load()
 	m_font.Load();
 	m_modelMachine = m_resources.RequestModel("Resources/machine2.obj");
 	m_modelPeg = m_resources.RequestModel("Resources/peg.obj");
+	m_modelGlass = m_resources.RequestModel("Resources/machineglass.obj");
 	m_resources.RequestModel("lighticon.png");
 
 	m_objectMachine.SetModel(m_modelMachine);
@@ -404,6 +405,8 @@ void Simulation::Draw()
 
 		glPopAttrib();
 	}
+
+	m_modelGlass->Draw();
 
 
 	glPopMatrix();	
