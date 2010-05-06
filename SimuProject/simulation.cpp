@@ -375,8 +375,9 @@ void Simulation::Draw()
 	int totalCollected = m_ballsDropped - m_ballVector.size();
 	if (totalCollected > 0)
 	{
-		glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BITS);
+		glPushAttrib(GL_LIGHTING_BIT | GL_TEXTURE_BIT);
 		Lighting::Disable();
+		glDisable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
 		glColor4f(0.85f, 0.227f, 0.227f, 0.5f);
 		for (int i = 0; i < 9; i++)
@@ -434,7 +435,7 @@ void Simulation::Draw()
 		"Dropped: " << m_ballsDropped << "\n" <<
 		"Active: " << m_ballVector.size() << "/" << m_maxBalls << "\n";
 
-	m_font.DrawText(s, ss.str(), Vector2f(windoww-3,0), Font::ALIGNMENT_RIGHT); 
+	m_font.DrawText(s, ss.str(), Vector2f((float)windoww-3,0), Font::ALIGNMENT_RIGHT); 
 
 	if (totalCollected > 0)
 	{

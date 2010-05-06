@@ -212,7 +212,7 @@ void Font::DrawText(SpriteBatch& spriteBatch, const std::string& text, const Vec
 Vector2f Font::MeasureString(const std::string& text)
 {
 	Vector2f currentPosition(0, 0);
-	Vector2f size(0,m_height);
+	Vector2f size(0,(float)m_height);
 	for(unsigned int i = 0; i < text.size(); i++)
 	{
 		unsigned char letter = text[i];
