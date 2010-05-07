@@ -45,6 +45,8 @@ void Material::Apply()
 		glDisable(GL_TEXTURE_2D);
 	}
 
+	glColor4f(1.0f, 1.0f, 1.0f, m_alpha);
+
 	GLfloat temp[4];
 	temp[0] = m_ambient.X();
 	temp[1] = m_ambient.Y();

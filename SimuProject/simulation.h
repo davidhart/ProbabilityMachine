@@ -8,6 +8,7 @@
 #include "texture.h"
 #include "camera.h"
 #include "pointlight.h"
+#include "directionallight.h"
 #include "ball.h"
 #include "peg.h"
 #include "plane.h"
@@ -48,7 +49,9 @@ private:
 	Camera m_fixedCamera;
 
 	PointLight m_light0;
-	
+	PointLight m_light1;
+	DirectionalLight m_light2;
+
 	ResourceBank m_resources;
 	SpriteBatch m_spriteBatch;
 	Font m_font;

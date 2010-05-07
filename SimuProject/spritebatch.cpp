@@ -76,6 +76,8 @@ void SpriteBatch::End( )
 {
 	unsigned int basePos = 0;
 
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
 	while (basePos != m_spritesToDraw.size())
 	{
 		unsigned int searchPos = basePos;

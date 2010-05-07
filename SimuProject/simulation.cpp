@@ -143,11 +143,23 @@ void Simulation::Load()
 
 	Lighting::Enable();
 	Light::Enable(0);
+	Light::Enable(1);
+	Light::Enable(2);
 
 	m_light0.SetPosition(Vector3f(-4.0f , 4.0f , 4.0f));
-	m_light0.SetAmbientColour(0.4f, 0.4f, 0.4f, 1.0f);
+	m_light0.SetAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
 	m_light0.SetDiffuseColour(0.6f, 0.6f, 0.6f, 1.0f);
 	m_light0.SetSpecularColour(0.5f, 0.5f, 0.5f, 1.0f);
+
+	m_light1.SetPosition(Vector3f(3.0f, 1.0f, 5.0f));
+	m_light1.SetAmbientColour(0.0f, 0.0f, 0.0f, 1.0f);
+	m_light1.SetDiffuseColour(0.6f, 0.6f, 0.65f, 1.0f);
+	m_light1.SetSpecularColour(0.5f, 0.5f, 0.55f, 1.0f);
+
+	m_light2.SetDirection(Vector3f(0.0f, 1.0f, 0.0f));
+	m_light2.SetAmbientColour(0.4f, 0.4f, 0.4f, 1.0f);
+	m_light2.SetDiffuseColour(0.3f, 0.3f, 0.3f, 1.0f);
+	m_light2.SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Simulation::Unload()
@@ -424,6 +436,8 @@ void Simulation::Draw()
 	}
 
 	m_light0.Apply(0);
+	m_light1.Apply(1);
+	m_light2.Apply(2);
 
 	glPushMatrix();
 
