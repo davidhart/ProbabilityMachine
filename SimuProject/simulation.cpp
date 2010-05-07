@@ -16,7 +16,6 @@ Simulation::Simulation() :
 	m_maxBalls ( 20 ),
 	m_frameTimeAccumulator ( 0.0 ),
 	m_font ("Tahoma", 12, false, false),
-	m_ballsDropped ( 0 ),
 	m_cameraMode ( CAMERA_MODE_FIXED ),
 	m_userCamera ( Vector3f(0, 3.5f, 16), 0, 0, 0 ),
 	m_userCamSimRotation ( Vector2f(0, 0) ),
@@ -28,9 +27,9 @@ Simulation::Simulation() :
 {
 	m_window.SetTitle("08241 Simulation and Rendering ACW - David Hart (#200879078)");
 
-	for (int i = 0; i < 9; i++) m_ballsCollected[i] = 0;
-
 	m_timeBetweenRenders.Start();
+
+	Reset();
 
 	srand((unsigned int)time(NULL));
 }
@@ -161,32 +160,37 @@ void Simulation::Update(const Input& input, double frameTime)
 	float frameTimeFloat = (float)frameTime;
 
 	// Handle input
-	if (input.IsKeyJustPressed(Input::KEY_ENTER))
+	if (input.IsKeyJustPressed(Input::KEY_1))
 	{
 		SpawnBall();
 	}
 	
-	if (input.IsKeyDown(Input::KEY_NUM_PLUS))
+	if (input.IsKeyDown(Input::KEY_2))
 	{
 		SpawnBall();
 	}
 
-	if (input.IsKeyJustPressed(Input::KEY_1))
+	if (input.IsKeyJustPressed(Input::KEY_F1))
 		m_cameraMode = CAMERA_MODE_FIXED;
 
-	if (input.IsKeyJustPressed(Input::KEY_2))
+	if (input.IsKeyJustPressed(Input::KEY_F2))
 		m_cameraMode = CAMERA_MODE_USER;
 
-	if (input.IsKeyJustPressed(Input::KEY_3))
+	if (input.IsKeyJustPressed(Input::KEY_F3))
 		m_cameraMode = CAMERA_MODE_BALL;
 
-	if (input.IsKeyJustPressed(Input::KEY_4))
+	if (input.IsKeyJustPressed(Input::KEY_R))
+	{
+		Reset();
+	}
+
+	if (input.IsKeyJustPressed(Input::KEY_NUM_MINUS))
 	{
 		m_simSpeed -= 0.1f;
 		if (m_simSpeed < 0.0f)
 			m_simSpeed = 0.0f;
 	}
-	if (input.IsKeyJustPressed(Input::KEY_5))
+	if (input.IsKeyJustPressed(Input::KEY_NUM_PLUS))
 	{
 		m_simSpeed += 0.1f;
 		if (m_simSpeed > 1.0f)
@@ -233,16 +237,16 @@ void Simulation::Update(const Input& input, double frameTime)
 			m_userCamera.RotatePitch(frameTimeFloat);
 	}
 
-	if (input.IsKeyJustPressed(Input::KEY_F1))
+	if (input.IsKeyJustPressed(Input::KEY_F5))
 		Lighting::Disable();
 
-	if (input.IsKeyJustPressed(Input::KEY_F2))
+	if (input.IsKeyJustPressed(Input::KEY_F6))
 		Lighting::Enable();
 
-	if (input.IsKeyJustPressed(Input::KEY_F3))
+	if (input.IsKeyJustPressed(Input::KEY_F7))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
-	if (input.IsKeyJustPressed(Input::KEY_F4))
+	if (input.IsKeyJustPressed(Input::KEY_F8))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Update simulation
@@ -584,4 +588,14 @@ void Simulation::SpawnBall()
 
 		m_ballsDropped++;
 	}
+}
+
+void Simulation::Reset()
+{
+	m_trackedBall = NULL;
+	for (unsigned int i = 0; i < m_ballVector.size(); i++)
+		delete m_ballVector[i];
+	m_ballVector.clear();
+	m_ballsDropped = 0;
+	for (int i = 0; i < 9; i++) m_ballsCollected[i] = 0;
 }

@@ -79,6 +79,7 @@ public:
 	void DrawGraph2D();
 
 	void SpawnBall();
+	void Reset();
 };
 
 #endif

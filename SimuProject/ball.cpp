@@ -65,6 +65,7 @@ void Ball::CollisionResponse(Ball& ball)
 	ball.ApplyForce(normal * - normal.Dot(ball.GetForce()));
 	ball.ApplyForce(ball.GetVelocity()*-0.01f);	// some kindof friction/energy transfer
 
+	float impulse2 = -(0.8f+0.8f)*this->GetVelocity().Dot(normal);
 	this->SetVelocity(this->GetVelocity() + normal*-impulse);
 	this->ApplyForce(normal * normal.Dot(this->GetForce()));
 	this->ApplyForce(ball.GetVelocity()*-0.01f);

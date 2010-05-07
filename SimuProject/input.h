@@ -16,6 +16,7 @@ public:
 		KEY_LEFT = VK_LEFT,
 		KEY_RIGHT = VK_RIGHT,
 		KEY_NUM_PLUS = VK_ADD,
+		KEY_NUM_MINUS = VK_SUBTRACT,
 		KEY_ENTER = VK_RETURN,
 
 		KEY_F1 = VK_F1,
@@ -35,6 +36,7 @@ public:
 		KEY_A = 0x41,
 		KEY_S = 0x53,
 		KEY_D = 0x44,
+		KEY_R = 0x52,
 
 		KEY_0 = 0x30,
 		KEY_1 = 0x31,
